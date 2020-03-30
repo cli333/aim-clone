@@ -1,39 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./App.css";
-import io from "socket.io-client";
+import SignOnWindow from "./components/SignOnWindow/SignOnWindow";
 
-const socket = io();
-
-function App() {
-  useEffect(() => {
-    return () => socket.close();
-  }, []);
-
-  useEffect(() => {
-    socket.on("chat message", response => {
-      console.log(response);
-    });
-  });
-
-  const [message, setMessage] = useState("");
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    socket.emit("chat message", message);
-    setMessage("");
-  };
-
+export default () => {
   return (
     <div>
-      <form onSubmit={e => handleSubmit(e)}>
-        <input
-          placeholder="send message"
-          onChange={e => setMessage(e.target.value)}
-          value={message}
-        />
-      </form>
+      hello
+      <SignOnWindow />
     </div>
   );
-}
-
-export default App;
+};
