@@ -1,0 +1,81 @@
+.buddy-list {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  box-shadow: -1px -1px #808080, 0px -1px #808080, -1px 0px #808080,
+    1px 1px white, -1px 1px white, 1px -1px white;
+  font-size: 13px;
+  width: 95%;
+  height: 85%;
+  background: white;
+  margin: 10px auto;
+  overflow-y: scroll;
+}
+
+.buddy-list > .category {
+  font-weight: bold;
+}
+
+.category > span {
+  margin-left: 3px;
+}
+
+.category-online,
+.category-online ul,
+.category-offline,
+.category-offline ul {
+  margin: 0 0 0 0.93em;
+  padding: 0;
+  list-style: none;
+  position: relative;
+}
+
+.category-online ul,
+.category-offline ul {
+  margin-left: 0.5em;
+}
+
+.category-online:before,
+.category-online ul:before,
+.category-offline:before,
+.category-offline ul:before {
+  content: "";
+  display: block;
+  width: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px dotted;
+}
+
+.category-online li,
+.category-offline li {
+  margin: 0;
+  padding: 0 1.3em;
+  line-height: 1.6em;
+  font-weight: bold;
+  position: relative;
+}
+
+.category-online li:before,
+.category-offline li:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 0;
+  border-top: 1px dotted;
+  margin-top: -1px;
+  position: absolute;
+  top: 1em;
+  left: 0;
+}
+
+.category-online li:last-child:before,
+.category-offline li:last-child:before {
+  background: white;
+  height: auto;
+  top: 1em;
+  bottom: 0;
+}

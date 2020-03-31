@@ -1,50 +1,13 @@
-.signon-window {
-  width: 300px;
-  height: 550px;
-  background: #c0c0c0;
-  border: 1px outset white;
-  border-bottom: 1px solid #808080;
-  border-right: 1px solid #808080;
-  border-left: 1px solid #c0c0c0;
-  border-top: 1px solid #c0c0c0;
-  box-shadow: -1px -1px white, 0px -1px white, -1px 0px white, 1px 1px black,
-    -1px 1px black, 1px -1px black;
+.signon-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.window-header {
-  background: #000080;
-  color: white;
-  display: block;
-  border: 1px solid #c0c0c0;
-  height: 20px;
-  line-height: 18px;
-  font-size: 12px;
-  padding-left: 3px;
-  font-weight: bold;
-}
-
-.window-header-button {
-  margin: 2px 2px 2px 0;
-  float: right;
-  width: 14px;
-  height: 13.5px;
-  background: #c0c0c0;
-  border-width: 1px;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  padding: 0;
-  font-size: 9px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.window-header-icon {
-  float: left;
-  margin-right: 2px;
-  height: 18px;
-}
-
-button:focus {
-  outline: none;
+.divider {
+  width: 95%;
 }
 
 .logo-wrapper {
@@ -53,5 +16,59 @@ button:focus {
 
 .logo {
   height: 285px;
-  filter: blur(0.8px);
+  filter: blur(0.6px);
+}
+
+.signon-bottom {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  width: 90%;
+}
+
+.signon-bottom > div {
+  padding-bottom: 5px;
+}
+
+.signon-bottom > div > span {
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+.screenname {
+  font-weight: bolder;
+  font-style: italic;
+  color: darkblue;
+}
+
+.password {
+  font-weight: bolder;
+}
+
+.signon-button {
+  background: transparent;
+  height: 75px;
+  width: 75px;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.signon-button > div {
+  font-weight: bold;
+}
+
+.signon-button > div > span {
+  text-decoration: underline;
+}
+
+.signon-button > img {
+  height: 80%;
+  filter: blur(0.5px);
+}
+
+.signon-button-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 25px;
 }
