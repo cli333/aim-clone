@@ -1,0 +1,55 @@
+.chatwindow {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  box-shadow: -1px -1px #808080, 0px -1px #808080, -1px 0px #808080,
+    1px 1px white, -1px 1px white, 1px -1px white;
+  font-size: 13px;
+  width: 97%;
+  height: 45%;
+  background: white;
+  margin: 10px auto;
+  overflow-y: scroll;
+}
+
+.chatwindow > li {
+  margin: 3px 4px;
+  list-style: none;
+}
+
+.chatwindow > li > span {
+  line-height: 1.7rem;
+  font-size: 1.4rem;
+}
+
+.chatwindow > li > .user {
+  font-weight: bolder;
+  color: red;
+}
+
+.chat-divider {
+  margin-left: 6px;
+  width: 97.5%;
+}
+
+.chatfield-wrapper {
+  margin-left: 6px;
+}
+
+.chatfield {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  box-shadow: -1px -1px #808080, 0px -1px #808080, -1px 0px #808080,
+    1px 1px white, -1px 1px white, 1px -1px white;
+  font-size: 13px;
+  width: 96.5%;
+  height: 125px;
+  background: white;
+  margin: 10px auto;
+  resize: none;
+  line-height: 1.7rem;
+  font-size: 1.4rem;
+}

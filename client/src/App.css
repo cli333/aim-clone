@@ -20,11 +20,17 @@ button {
   background: transparent;
 }
 
-button:focus {
+button:focus,
+textarea:focus {
   outline: none;
 }
 
-input {
+textarea {
+  padding: 5px 5px;
+}
+
+input,
+textarea {
   cursor: text;
 }
 
