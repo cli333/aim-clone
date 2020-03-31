@@ -1,0 +1,63 @@
+.category {
+  font-weight: bold;
+}
+
+.category > span {
+  margin-left: 3px;
+}
+
+.category-type,
+.category-type ul {
+  margin: 0 0 0 0.93em;
+  padding: 0;
+  list-style: none;
+  position: relative;
+}
+
+.category-type ul {
+  margin-left: 0.5em;
+}
+
+.category-type:before,
+.category-type ul:before {
+  content: "";
+  display: block;
+  width: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px dotted;
+}
+
+.category-type li {
+  margin: 0;
+  padding: 0 1.3em;
+  line-height: 1.6em;
+  font-weight: bold;
+  position: relative;
+}
+
+.category-type li:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 0;
+  border-top: 1px dotted;
+  margin-top: -1px;
+  position: absolute;
+  top: 1em;
+  left: 0;
+}
+
+.category-type li:last-child:before {
+  background: white;
+  height: auto;
+  top: 1em;
+  bottom: 0;
+}
+
+.active {
+  border: 1px dotted;
+  color: rgba(0, 0, 0, 0.5);
+}
