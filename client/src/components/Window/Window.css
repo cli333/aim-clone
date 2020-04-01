@@ -7,7 +7,7 @@
   border-top: 1px solid #c0c0c0;
   box-shadow: -1px -1px white, 0px -1px white, -1px 0px white, 1px 1px black,
     -1px 1px black, 1px -1px black;
-  display: relative;
+  position: relative;
 }
 
 .window > .header {
@@ -40,4 +40,8 @@
   font-size: 9px;
   font-weight: bold;
   text-align: center;
+}
+
+.selected {
+  z-index: 100;
 }

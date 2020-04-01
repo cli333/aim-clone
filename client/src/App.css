@@ -1,5 +1,6 @@
 body {
   background: url("/windows95.jpg");
+  overflow-y: hidden;
 }
 
 * {

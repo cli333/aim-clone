@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import "./SignOnWindow.css";
 import Window from "../Window/Window";
+import useAuth from "../../hooks/useAuth";
+import { authCtx } from "../../context/AuthProvider";
 
 export default () => {
+  const [screenName, setScreenName] = useState("");
+  const [password, setPassword] = useState("");
+  const { errors, setErrors, handleSubmit } = useAuth({
+    screenName,
+    setScreenName,
+    password,
+    setPassword
+  });
+  const { authUser, handleSignOut } = useContext(authCtx);
+
   return (
     <Window
       header="Sign On"
@@ -10,7 +22,7 @@ export default () => {
       defaultPosition={{ x: 900, y: 100 }}
       style={{ width: "300px" }}
     >
-      <div className="signon-body">
+      <form className="signon-body">
         <div className="logo-wrapper">
           <img src="/logo.png" alt="logo" className="logo" />
         </div>
@@ -23,26 +35,55 @@ export default () => {
                 🔑
               </span>
             </label>
-            <input name="screenname" type="text" placeholder="screen name" />
+            <input
+              name="screenname"
+              type="text"
+              placeholder={`${errors.screenName || "screen name"}`}
+              value={screenName}
+              onChange={e => {
+                setScreenName(e.target.value);
+                setErrors({});
+              }}
+              disabled={authUser}
+            />
           </div>
 
           <div className="input">
             <label htmlFor="password" className="password">
               Password
             </label>
-            <input name="password" type="password" placeholder="password" />
+            <input
+              name="password"
+              type="password"
+              placeholder={`${errors.password || "password"}`}
+              value={password}
+              onChange={e => {
+                setPassword(e.target.value);
+                setErrors({});
+              }}
+              disabled={authUser}
+            />
           </div>
         </div>
 
         <div className="signon-button-wrapper">
-          <button className="signon-button">
-            <img src="/icon2.png" alt="sign in" />
-            <div>
-              <span>S</span>ign On
-            </div>
-          </button>
+          {!authUser ? (
+            <button className="signon-button" onClick={e => handleSubmit(e)}>
+              <img src="/icon2.png" alt="sign in" />
+              <div>
+                <span>S</span>ign On
+              </div>
+            </button>
+          ) : (
+            <button className="signon-button" onClick={e => handleSignOut(e)}>
+              <img className="signout" src="/icon2.png" alt="sign out" />
+              <div>
+                <span>S</span>ign Out
+              </div>
+            </button>
+          )}
         </div>
-      </div>
+      </form>
     </Window>
   );
 };

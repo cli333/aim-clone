@@ -54,7 +54,7 @@ router.post("/", (req, res) => {
                 res.json({ token });
               });
             } else {
-              res.json("Incorrect password");
+              res.json({ password: "Incorrect password" });
             }
           }
         });

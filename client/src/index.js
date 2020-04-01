@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import ChatWindowsProvider from "./context/ChatWindowsProvider";
+import AuthProvider from "./context/AuthProvider";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ChatWindowsProvider>
-      <App />
-    </ChatWindowsProvider>
+    <AuthProvider>
+      <ChatWindowsProvider>
+        <App />
+      </ChatWindowsProvider>
+    </AuthProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

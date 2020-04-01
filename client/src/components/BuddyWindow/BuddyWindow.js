@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./BuddyWindow.css";
 import Window from "../Window/Window";
 import BuddyList from "../BuddyList/BuddyList";
+import { authCtx } from "../../context/AuthProvider";
 
 export default () => {
   const [displayAdd, setDisplayAdd] = useState(false);
+  const { authUser } = useContext(authCtx);
 
   return (
     <Window
-      header="User's Buddy List"
+      header={`${authUser.screenName}'s Buddy List`}
       handle="buddy-window"
       defaultPosition={{ x: 300, y: -450 }}
       style={{ width: "225px", height: "700px" }}

@@ -66,6 +66,11 @@
   filter: blur(0.5px);
 }
 
+.signout {
+  filter: grayscale(100%) !important;
+  transform: rotateY(180deg) !important;
+}
+
 .signon-button-wrapper {
   width: 100%;
   display: flex;
