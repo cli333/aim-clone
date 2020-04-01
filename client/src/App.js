@@ -3,15 +3,15 @@ import "./App.css";
 import SignOnWindow from "./components/SignOnWindow/SignOnWindow";
 import BuddyWindow from "./components/BuddyWindow/BuddyWindow";
 import ChatWindow from "./components/ChatWindow/ChatWindow";
-import { positionCtx } from "./context/PositionProvider";
+import { chatWindowsCtx } from "./context/ChatWindowsProvider";
 
 export default () => {
-  const { positions } = useContext(positionCtx);
+  const { buddies } = useContext(chatWindowsCtx);
   return (
     <React.Fragment>
       <SignOnWindow />
       <BuddyWindow />
-      {positions.length > 0 && positions.map(position => <ChatWindow />)}
+      {buddies.length > 0 && buddies.map(buddy => <ChatWindow {...buddy} />)}
     </React.Fragment>
   );
 };

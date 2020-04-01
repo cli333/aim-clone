@@ -7,8 +7,34 @@
     1px 1px white, -1px 1px white, 1px -1px white;
   font-size: 13px;
   width: 95%;
-  height: 85%;
+  height: 67%;
   background: white;
   margin: 10px auto;
   overflow-y: scroll;
+}
+
+.buddy-form {
+  display: flex;
+  flex-direction: column;
+
+  height: 10px;
+  width: 95%;
+  padding-left: 5px;
+}
+
+.buddy-form > button {
+  margin-bottom: 5px;
+  margin-right: 180px;
+}
+
+.buddy-form > button > img {
+  height: 25px;
+}
+
+.banner {
+  height: 126px;
+}
+
+.banner > img {
+  height: 100%;
 }

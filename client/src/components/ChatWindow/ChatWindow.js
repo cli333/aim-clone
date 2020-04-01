@@ -2,13 +2,18 @@ import React from "react";
 import "./ChatWindow.css";
 import Window from "../Window/Window";
 
-export default () => {
+export default ({ position: { x, y } }) => {
   return (
     <Window
       header="smixity - Instant Message"
       handle="chat-window"
-      defaultPosition={{ x: 800, y: -950 }}
-      style={{ width: "550px", height: "500px" }}
+      style={{
+        position: "absolute",
+        width: "550px",
+        height: "500px",
+        top: `${y}px`,
+        left: `${x}px`
+      }}
     >
       <ul className="chatwindow">
         <li>

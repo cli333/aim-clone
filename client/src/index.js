@@ -3,13 +3,13 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import PositionProvider from "./context/PositionProvider";
+import ChatWindowsProvider from "./context/ChatWindowsProvider";
 
 ReactDOM.render(
   <React.StrictMode>
-    <PositionProvider>
+    <ChatWindowsProvider>
       <App />
-    </PositionProvider>
+    </ChatWindowsProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

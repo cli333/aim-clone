@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./BuddyList.css";
 import useClick from "../../hooks/useClick";
+import { chatWindowsCtx } from "../../context/ChatWindowsProvider";
 
 export default ({ buddies, category }) => {
   const [open, setOpen] = useState(true);
   const [activeIdx, setActiveIdx] = useState(null);
   const [activeBuddy, setActiveBuddy] = useState(null);
   const { handleClick, handleDoubleClick } = useClick(onClick, onDoubleClick);
+  const { handleNewWindow } = useContext(chatWindowsCtx);
 
   function onClick(idx) {
     if (idx !== activeIdx) {
@@ -17,7 +19,7 @@ export default ({ buddies, category }) => {
   }
 
   function onDoubleClick() {
-    console.log("DOUBLE click", activeBuddy);
+    handleNewWindow({ user: activeBuddy });
   }
 
   return (
@@ -45,7 +47,7 @@ export default ({ buddies, category }) => {
                 }}
                 onMouseEnter={() => setActiveBuddy(buddy)}
                 onMouseLeave={() => setActiveBuddy(null)}
-                onDoubleClick={() => handleDoubleClick(buddy)}
+                onDoubleClick={() => handleDoubleClick()}
               >
                 {buddy}
               </li>

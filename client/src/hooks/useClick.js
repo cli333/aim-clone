@@ -10,7 +10,7 @@ export default (onClick, onDoubleClick) => {
 
   const handleClick = idx => {
     clearPendingPromises();
-    const waitForClick = cancellablePromise(delay(200));
+    const waitForClick = cancellablePromise(delay(300));
     appendPendingPromise(waitForClick);
 
     return waitForClick.promise

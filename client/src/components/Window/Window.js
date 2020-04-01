@@ -9,6 +9,7 @@ export default ({ children, header, handle, defaultPosition, style }) => {
         <div className={`header ${handle}`}>
           <img className="icon" src="/icon.png" alt="icon" />
           {header}
+
           <button className="button">X</button>
         </div>
         {children}

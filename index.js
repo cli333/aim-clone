@@ -1,33 +1,15 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const pg = require("pg");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const port = process.env.PORT || 5000;
+const auth = require("./routes/auth");
 
 app.use(cors());
 app.use(express.json());
 
-const conString =
-  "postgres://sjjcnsze:x5YGKeKksOXyIg0btWB-bT16IKqhvjR2@drona.db.elephantsql.com:5432/sjjcnsze";
-const client = new pg.Client(conString);
-client.connect(err => {
-  if (err) {
-    return console.log("Could not connect to ElephantSQL", err);
-  }
-  client.query('SELECT NOW() AS "theTime"', (err, result) => {
-    if (err) {
-      return console.log("Error running query", err);
-    }
-    console.log(result.rows[0].theTime);
-    client.end();
-  });
-});
-
-app.get("/", (req, res) => {
-  res.send("hello world");
-});
+app.use("/auth", auth);
 
 io.on("connection", socket => {
   console.log("a user connected");
