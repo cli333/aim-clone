@@ -3,13 +3,12 @@ import io from "socket.io-client";
 
 export const socketCtx = createContext();
 
-export default ({ children }) => {
-  let socket;
+let socket = io();
 
+export default ({ children }) => {
   useEffect(() => {
-    socket = io();
     return () => socket.close();
   }, []);
 
-  return <socketCtx value={{ socket }}>{children}</socketCtx>;
+  return <socketCtx.Provider value={{ socket }}>{children}</socketCtx.Provider>;
 };

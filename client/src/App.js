@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./App.css";
 import SignOnWindow from "./components/SignOnWindow/SignOnWindow";
 import BuddyWindow from "./components/BuddyWindow/BuddyWindow";

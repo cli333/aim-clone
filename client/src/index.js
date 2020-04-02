@@ -5,14 +5,17 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import ChatWindowsProvider from "./context/ChatWindowsProvider";
 import AuthProvider from "./context/AuthProvider";
+import SocketProvider from "./context/SocketProvider";
 
 ReactDOM.render(
   <React.StrictMode>
-    <AuthProvider>
-      <ChatWindowsProvider>
-        <App />
-      </ChatWindowsProvider>
-    </AuthProvider>
+    <SocketProvider>
+      <AuthProvider>
+        <ChatWindowsProvider>
+          <App />
+        </ChatWindowsProvider>
+      </AuthProvider>
+    </SocketProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

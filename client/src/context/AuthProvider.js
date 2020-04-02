@@ -1,9 +1,12 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { socketCtx } from "./SocketProvider";
 
 export const authCtx = createContext();
 
 export default ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
+  //
+  const { socket } = useContext(socketCtx);
 
   const handleSignOn = user => {
     setAuthUser(user);
@@ -22,6 +25,10 @@ export default ({ children }) => {
       setAuthUser(JSON.parse(user));
     }
   }, []);
+
+  useEffect(() => {
+    socket.on("user sign on", res => console.log(res));
+  }, [socket]);
 
   // useEffect(() => {
   //   return () => localStorage.removeItem("ROLdata");
