@@ -15,18 +15,13 @@ app.use("/auth", auth);
 
 io.on("connection", socket => {
   console.log("a user connected");
-  socket.on("chat message", message => {
-    socket.emit(
-      "chat message",
-      `I am responding to your message => ${message}`
-    );
-  });
+  socket.on("disconnect", () => console.log("a user disconnected"));
 });
 
 io.on("connection", socket => {
-  socket.on("sign on", package => handleSignOn(package, io, socket));
+  socket.on("sign on", package => handleSignOn(package, socket));
 
-  socket.on("sign out", package => handleSignOut(package, io, socket));
+  socket.on("sign out", package => handleSignOut(package, socket));
 });
 
 server.listen(port, () => console.log(`Server listening on port ${port}`));

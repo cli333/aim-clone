@@ -5,18 +5,18 @@ export const authCtx = createContext();
 
 export default ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
-  //
   const { socket } = useContext(socketCtx);
 
-  const handleSignOn = user => {
-    setAuthUser(user);
-    localStorage.setItem("ROLdata", JSON.stringify(user));
+  const handleSignOn = ({ screenName, token }) => {
+    setAuthUser({ screenName });
+    localStorage.setItem("ROLdata", JSON.stringify({ screenName, token }));
   };
 
   const handleSignOut = e => {
     e.preventDefault();
     setAuthUser(null);
     localStorage.removeItem("ROLdata");
+    socket.emit("sign out", { screenName: authUser.screenName });
   };
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default ({ children }) => {
   }, []);
 
   useEffect(() => {
-    socket.on("user sign on", res => console.log(res));
+    socket.on("signed on", response => handleSignOn(response));
   }, [socket]);
 
   // useEffect(() => {
@@ -35,7 +35,7 @@ export default ({ children }) => {
   // }, []);
 
   return (
-    <authCtx.Provider value={{ authUser, handleSignOn, handleSignOut }}>
+    <authCtx.Provider value={{ authUser, handleSignOut }}>
       {children}
     </authCtx.Provider>
   );

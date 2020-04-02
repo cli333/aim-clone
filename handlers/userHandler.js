@@ -13,80 +13,55 @@ const client = new Client({
 
 client.connect();
 
-function getToken(data) {
-  jwt.sign(data, "secretkey", (err, token) => {
-    if (err) {
-      throw err;
-    } else {
-      console.log(token);
-      return token;
-    }
-  });
-}
-
-function hashPassword(password) {
-  bcrypt.hash(password, 10, (err, hash) => {
-    if (err) throw err;
-    else return hash;
-  });
-}
-
-function checkPassword(password, hash) {
-  bcrypt.compare(password, hash, (err, result) => {
-    if (err) {
-      throw err;
-    } else {
-      console.log(result);
-    }
-  });
-}
-
-function insertDb(screenName, password) {
-  let query = "INSERT INTO users(screenname, password) VALUES($1, $2)";
-  let values = [screenName, hashPassword(password)];
-  client.query(query, values, (err, result) => {
-    if (err) {
-      throw err;
-    } else {
-      return getToken({ screenName });
-    }
-  });
-}
-
-function queryDb(screenName, password) {
+const handleSignOn = ({ screenName, password }, socket) => {
   let query = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";
   let values = [screenName];
   client.query(query, values, (err, result) => {
-    let token;
     if (err) {
       throw err;
     } else if (result.rows.length === 0) {
-      return false;
-    } else if (checkPassword(password, result.rows[0].password)) {
-      //
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          throw err;
+        } else {
+          let query = "INSERT INTO users(screenname, password) VALUES($1, $2)";
+          let values = [screenName, hash];
+          client.query(query, values, (err, result) => {
+            if (err) {
+              throw err;
+            } else {
+              jwt.sign({ screenName }, "secretkey", (err, token) => {
+                socket.emit("signed on", { screenName, token });
+                socket.broadcast.emit("user signed on", { screenName });
+              });
+            }
+          });
+        }
+      });
     } else {
-      return { password: "Incorrect password" };
+      const hash = result.rows[0].password;
+      bcrypt.compare(password, hash, (err, result) => {
+        if (err) {
+          throw err;
+        } else {
+          if (result === true) {
+            jwt.sign({ screenName }, "secretkey", (err, token) => {
+              socket.emit("signed on", { screenName, token });
+              socket.broadcast.emit("user signed on", { screenName });
+            });
+          } else {
+            socket.emit("Incorrect password");
+          }
+        }
+      });
     }
   });
-}
+};
 
-function handleSignOn({ screenName, password }, io, socket) {
-  // if no user, create user, return token
-  // if user, return token
-  // if user but no password, return {incorrect password}
-  let token = queryDb(screenName, password);
-
-  // if (!token) return insertDb(screenName, password);
-
-  // // send to sender
-  // socket.emit("sign on", { token });
-  // // send to all connected
-  // io.emit("user sign on", { screenName });
-}
-
-function handleSignOut({ screenName }, io, socket) {
-  io.emit("user sign out", { screenName });
-}
+const handleSignOut = ({ screenName }, socket) => {
+  socket.emit("signed out");
+  socket.broadcast.emit("user signed out", { screenName });
+};
 
 module.exports = {
   handleSignOn,
