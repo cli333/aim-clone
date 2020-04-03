@@ -1,17 +1,53 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, createContext, useEffect } from "react";
 import { authCtx } from "./AuthProvider";
+import { socketCtx } from "./SocketProvider";
 
-export const buddyCtx = useContext();
+export const buddyCtx = createContext();
 
 export default ({ children }) => {
-  const [buddies, setBuddies] = useState([]);
+  const [offlineBuddies, setOfflineBuddies] = useState([]);
+  const [onlineBuddies, setOnlineBuddies] = useState([]);
   const { authUser } = useContext(authCtx);
+  const { socket } = useContext(socketCtx);
+
+  useEffect(() => {
+    if (authUser) socket.emit("get friends", authUser);
+    socket.on("got friends", friends =>
+      friends ? setOfflineBuddies(friends) : null
+    );
+    socket.on("user signed on", ({ screenName }) => {
+      let updatedOnlineBuddies = [...onlineBuddies, screenName];
+      let updatedOfflineBuddies = offlineBuddies.filter(
+        buddy => buddy !== screenName
+      );
+      if (offlineBuddies.indexOf(screenName) > -1) {
+        setOfflineBuddies(updatedOfflineBuddies);
+        setOnlineBuddies(updatedOnlineBuddies);
+      }
+    });
+    socket.on("user signed out", ({ screenName }) => {
+      let updatedOnlineBuddies = onlineBuddies.filter(
+        buddy => buddy !== screenName
+      );
+      let updatedOfflineBuddies = [...offlineBuddies, screenName];
+      if (onlineBuddies.includes(screenName)) {
+        setOnlineBuddies(updatedOnlineBuddies);
+        setOfflineBuddies(updatedOfflineBuddies);
+      }
+    });
+  });
 
   useEffect(() => {
     if (authUser) {
-      // get buddies
+      socket.emit("broadcast user signed on", {
+        screenName: authUser.screenName
+      });
     }
-  }, [authUser]);
+  });
 
-  return <buddyCtx.Provider value={{ buddies }}>{children}</buddyCtx.Provider>;
+  return (
+    <buddyCtx.Provider value={{ offlineBuddies, onlineBuddies }}>
+      {children}
+    </buddyCtx.Provider>
+  );
 };

@@ -36,7 +36,7 @@ export default ({ buddies, category }) => {
       <span>{category}</span>
       {open && (
         <ul className="category-type">
-          {buddies.length > 0 &&
+          {buddies &&
             buddies.map((buddy, idx) => (
               <li
                 className={`${idx === activeIdx ? "active" : ""}`}

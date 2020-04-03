@@ -6,14 +6,17 @@ import * as serviceWorker from "./serviceWorker";
 import ChatWindowsProvider from "./context/ChatWindowsProvider";
 import AuthProvider from "./context/AuthProvider";
 import SocketProvider from "./context/SocketProvider";
+import BuddyProvider from "./context/BuddyProvider";
 
 ReactDOM.render(
   <React.StrictMode>
     <SocketProvider>
       <AuthProvider>
-        <ChatWindowsProvider>
-          <App />
-        </ChatWindowsProvider>
+        <BuddyProvider>
+          <ChatWindowsProvider>
+            <App />
+          </ChatWindowsProvider>
+        </BuddyProvider>
       </AuthProvider>
     </SocketProvider>
   </React.StrictMode>,

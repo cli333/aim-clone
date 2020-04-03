@@ -9,7 +9,7 @@ export default ({ screenName, setScreenName, password, setPassword }) => {
     socket.on("Incorrect password", () => {
       setErrors({ ...errors, password: "Incorrect password" });
     });
-  }, [socket]);
+  }, [socket, errors]);
 
   const validate = (screenName, password) => {
     let errors = {};

@@ -8,7 +8,7 @@ export default ({ children }) => {
   const { socket } = useContext(socketCtx);
 
   const handleSignOn = ({ screenName, token }) => {
-    setAuthUser({ screenName });
+    setAuthUser({ screenName, token });
     localStorage.setItem("ROLdata", JSON.stringify({ screenName, token }));
   };
 

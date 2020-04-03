@@ -3,10 +3,12 @@ import "./BuddyWindow.css";
 import Window from "../Window/Window";
 import BuddyList from "../BuddyList/BuddyList";
 import { authCtx } from "../../context/AuthProvider";
+import { buddyCtx } from "../../context/BuddyProvider";
 
 export default () => {
   const [displayAdd, setDisplayAdd] = useState(false);
   const { authUser } = useContext(authCtx);
+  const { onlineBuddies, offlineBuddies } = useContext(buddyCtx);
 
   return (
     <Window
@@ -19,20 +21,8 @@ export default () => {
         <img src="/banner.png" alt="banner" />
       </div>
       <div className="buddy-list">
-        <BuddyList
-          buddies={[
-            "smixity",
-            "JOhnSmith",
-            "CarolDanvers",
-            "YoshiIsCool37",
-            "ShopGirl"
-          ]}
-          category={"Online"}
-        />
-        <BuddyList
-          buddies={["quex", "Elite1337", "Smilley", "JohnWaine"]}
-          category={"Offline"}
-        />
+        <BuddyList buddies={onlineBuddies} category={"Online"} />
+        <BuddyList buddies={offlineBuddies} category={"Offline"} />
       </div>
       <div className="buddy-form">
         <button onClick={() => setDisplayAdd(!displayAdd)}>
