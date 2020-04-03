@@ -7,16 +7,19 @@ export default ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const { socket } = useContext(socketCtx);
 
-  const handleSignOn = ({ screenName, token }) => {
-    setAuthUser({ screenName, token });
-    localStorage.setItem("ROLdata", JSON.stringify({ screenName, token }));
+  const handleSignOn = response => {
+    setAuthUser(response);
+    localStorage.setItem("ROLdata", JSON.stringify(response));
   };
 
   const handleSignOut = e => {
     e.preventDefault();
     setAuthUser(null);
     localStorage.removeItem("ROLdata");
-    socket.emit("sign out", { screenName: authUser.screenName });
+    socket.emit("sign out", {
+      screenName: authUser.screenName,
+      id: authUser.id
+    });
   };
 
   useEffect(() => {
@@ -29,6 +32,11 @@ export default ({ children }) => {
   useEffect(() => {
     socket.on("signed on", response => handleSignOn(response));
   }, [socket]);
+
+  // TEST
+  useEffect(() => {
+    socket.on("TEST", res => console.log(res));
+  }, []);
 
   // useEffect(() => {
   //   return () => localStorage.removeItem("ROLdata");

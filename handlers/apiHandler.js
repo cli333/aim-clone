@@ -1,8 +1,8 @@
-const client = require("./client");
+const client = require("../pgclient/client");
 const jwt = require("jsonwebtoken");
 
-const handleGetFriends = ({ screenName, token }, socket) => {
-  let query = "SELECT friends FROM users WHERE screenname = $1";
+function handleGetBuddies({ screenName, token }, socket) {
+  let query = "SELECT friends AS 'buddies' FROM users WHERE screenname = $1";
   let values = [screenName];
   jwt.verify(token, "secretkey", (err, authData) => {
     if (err) {
@@ -12,12 +12,12 @@ const handleGetFriends = ({ screenName, token }, socket) => {
         if (err) {
           throw err;
         } else {
-          const friends = result.rows[0].friends;
-          socket.emit("got friends", friends);
+          const buddies = result.rows[0].buddies;
+          socket.emit("got buddies", buddies);
         }
       });
     }
   });
-};
+}
 
-module.exports = { handleGetFriends };
+module.exports = { handleGetBuddies };

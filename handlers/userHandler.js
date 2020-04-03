@@ -1,8 +1,8 @@
-const client = require("./client");
+const client = require("../pgclient/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const handleSignOn = ({ screenName, password }, socket) => {
+function handleSignOn({ screenName, password }, socket, userManager) {
   let query = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";
   let values = [screenName];
   client.query(query, values, (err, result) => {
@@ -19,24 +19,41 @@ const handleSignOn = ({ screenName, password }, socket) => {
             if (err) {
               throw err;
             } else {
-              jwt.sign({ screenName }, "secretkey", (err, token) => {
-                socket.emit("signed on", { screenName, token });
-                socket.broadcast.emit("user signed on", { screenName });
+              let query = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";
+              let values = [screenName];
+              client.query(query, values, (err, result) => {
+                if (err) {
+                  throw err;
+                } else {
+                  const { id } = result.rows[0];
+                  jwt.sign({ screenName }, "secretkey", (err, token) => {
+                    socket.emit("signed on", { screenName, token, id });
+                    userManager.addOnlineUser(user);
+                    socket.broadcast.emit("updated online/offline users", {
+                      ...userManager.onlineUsers,
+                      ...userManager.offlineUsers
+                    });
+                  });
+                }
               });
             }
           });
         }
       });
     } else {
-      const hash = result.rows[0].password;
+      const { password: hash, id } = result.rows[0];
       bcrypt.compare(password, hash, (err, result) => {
         if (err) {
           throw err;
         } else {
           if (result === true) {
             jwt.sign({ screenName }, "secretkey", (err, token) => {
-              socket.emit("signed on", { screenName, token });
-              socket.broadcast.emit("user signed on", { screenName });
+              socket.emit("signed on", { screenName, token, id });
+              userManager.addOnlineUser(user);
+              socket.broadcast.emit("updated online users", {
+                ...userManager.onlineUsers,
+                ...userManager.offlineUsers
+              });
             });
           } else {
             socket.emit("Incorrect password");
@@ -45,13 +62,8 @@ const handleSignOn = ({ screenName, password }, socket) => {
       });
     }
   });
-};
-
-const handleSignOut = ({ screenName }, socket) => {
-  socket.broadcast.emit("user signed out", { screenName });
-};
+}
 
 module.exports = {
-  handleSignOn,
-  handleSignOut
+  handleSignOn
 };

@@ -37,14 +37,6 @@ export default ({ children }) => {
     });
   });
 
-  useEffect(() => {
-    if (authUser) {
-      socket.emit("broadcast user signed on", {
-        screenName: authUser.screenName
-      });
-    }
-  });
-
   return (
     <buddyCtx.Provider value={{ offlineBuddies, onlineBuddies }}>
       {children}
