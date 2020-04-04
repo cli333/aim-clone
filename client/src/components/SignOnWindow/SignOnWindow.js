@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./SignOnWindow.css";
 import Window from "../Window/Window";
 import useAuth from "../../hooks/useAuth";
@@ -11,7 +11,7 @@ export default () => {
     screenName,
     setScreenName,
     password,
-    setPassword
+    setPassword,
   });
   const { authUser, handleSignOut } = useContext(authCtx);
 
@@ -40,7 +40,7 @@ export default () => {
               type="text"
               placeholder={`${errors.screenName || "screen name"}`}
               value={screenName}
-              onChange={e => {
+              onChange={(e) => {
                 setScreenName(e.target.value);
                 setErrors({});
               }}
@@ -57,7 +57,7 @@ export default () => {
               type="password"
               placeholder={`${errors.password || "password"}`}
               value={password}
-              onChange={e => {
+              onChange={(e) => {
                 setPassword(e.target.value);
                 setErrors({});
               }}
@@ -68,14 +68,14 @@ export default () => {
 
         <div className="signon-button-wrapper">
           {!authUser ? (
-            <button className="signon-button" onClick={e => handleSubmit(e)}>
+            <button className="signon-button" onClick={(e) => handleSubmit(e)}>
               <img src="/icon2.png" alt="sign in" />
               <div>
                 <span>S</span>ign On
               </div>
             </button>
           ) : (
-            <button className="signon-button" onClick={e => handleSignOut(e)}>
+            <button className="signon-button" onClick={(e) => handleSignOut(e)}>
               <img className="signout" src="/icon2.png" alt="sign out" />
               <div>
                 <span>S</span>ign Out

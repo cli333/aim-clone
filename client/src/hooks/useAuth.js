@@ -9,6 +9,9 @@ export default ({ screenName, setScreenName, password, setPassword }) => {
     socket.on("Incorrect password", () => {
       setErrors({ ...errors, password: "Incorrect password" });
     });
+    socket.on("User already logged in", () => {
+      setErrors({ ...errors, screenName: "User already logged in" });
+    });
   }, [socket, errors]);
 
   const validate = (screenName, password) => {
@@ -22,7 +25,7 @@ export default ({ screenName, setScreenName, password, setPassword }) => {
     return errors;
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate(screenName, password);
     if (Object.keys(validationErrors).length === 0) {
@@ -37,6 +40,6 @@ export default ({ screenName, setScreenName, password, setPassword }) => {
   return {
     errors,
     setErrors,
-    handleSubmit
+    handleSubmit,
   };
 };

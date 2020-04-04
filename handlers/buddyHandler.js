@@ -1,4 +1,4 @@
-const client = require("../pgclient/client");
+const pgClient = require("../pgclient/client");
 const jwt = require("jsonwebtoken");
 
 function handleGetBuddies({ screenName, token }, socket) {
@@ -8,7 +8,7 @@ function handleGetBuddies({ screenName, token }, socket) {
     if (err) {
       throw err;
     } else {
-      client.query(query, values, (err, result) => {
+      pgClient.query(query, values, (err, result) => {
         if (err) {
           throw err;
         } else {

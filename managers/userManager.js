@@ -1,29 +1,47 @@
-module.exports = function () {
-  const onlineUsers = new Map();
-  const offlineUsers = new Map();
+const redisClient = require("../redisClient/client");
+const { toArray } = require("../utils/utils");
 
-  function addOnlineUser(user) {
-    onlineUsers.set(user.id, { user });
-    removeOfflineUser(user);
-  }
+function addOnlineUser(user) {
+  // onlineUsers.set(user.id, { user });
+  redisClient.sadd("onlineUsers", `${user.id};${user.screenName}`);
+}
 
-  function removeOnlineUser(user) {
-    onlineUsers.delete(user.id);
-  }
+function removeOnlineUser(user) {
+  // onlineUsers.delete(user.id);
+  redisClient.srem("onlineUsers", `${user.id};${user.screenName}`);
+}
 
-  function addOfflineUser(user) {
-    offlineUsers.set(user.id, { user });
-    removeOnlineUser(user);
-  }
+function getOnlineUsers() {
+  return new Promise((resolve, reject) => {
+    redisClient.smembers("onlineUsers", (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(toArray(result));
+      }
+    });
+  });
+}
 
-  function removeOfflineUser(user) {
-    offlineUsers.delete(user.id);
-  }
+function isUserAlreadyOnline(user) {
+  return new Promise((resolve, reject) => {
+    redisClient.sismember(
+      "onlineUsers",
+      `${user.id};${user.screenName}`,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+}
 
-  return {
-    onlineUsers,
-    offlineUsers,
-    addOnlineUser,
-    addOfflineUser,
-  };
+module.exports = {
+  addOnlineUser,
+  removeOnlineUser,
+  getOnlineUsers,
+  isUserAlreadyOnline,
 };

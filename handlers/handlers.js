@@ -1,17 +1,12 @@
-module.exports = function(socket, userHandler, userManager) {
+const userHandler = require("./userHandler");
+
+module.exports = function (socket) {
   function handleSignOn(user) {
-    userHandler.handleSignOn(user, socket, userManager);
+    userHandler.handleSignOn(user, socket);
   }
 
   function handleSignOut(user) {
-    userManager.addOfflineUser(user);
-    let onlineUsers = userManager.onlineUsers;
-    let offlineUsers = userManager.offlineUsers;
-    socket.emit("Updated online/offline users", {
-      userManager,
-      onlineUsers,
-      offlineUsers
-    });
+    userHandler.handleSignOut(user, socket);
   }
 
   return { handleSignOn, handleSignOut };

@@ -7,18 +7,18 @@ export default ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const { socket } = useContext(socketCtx);
 
-  const handleSignOn = response => {
+  const handleSignOn = (response) => {
     setAuthUser(response);
     localStorage.setItem("ROLdata", JSON.stringify(response));
   };
 
-  const handleSignOut = e => {
+  const handleSignOut = (e) => {
     e.preventDefault();
     setAuthUser(null);
     localStorage.removeItem("ROLdata");
     socket.emit("sign out", {
       screenName: authUser.screenName,
-      id: authUser.id
+      id: authUser.id,
     });
   };
 
@@ -30,16 +30,8 @@ export default ({ children }) => {
   }, []);
 
   useEffect(() => {
-    socket.on("Signed on", response => handleSignOn(response));
+    socket.on("Signed on", (response) => handleSignOn(response));
   }, [socket]);
-
-  useEffect(() => {
-    socket.on("Updated online/offline users", res => console.log(res));
-  }, []);
-
-  useEffect(() => {
-    socket.emit("TEST ADD", { id: 999, name: "I am test" });
-  }, []);
 
   // useEffect(() => {
   //   return () => localStorage.removeItem("ROLdata");
