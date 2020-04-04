@@ -3,7 +3,10 @@ const app = express();
 const cors = require("cors");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
+const colors = require("colors");
 const port = process.env.PORT || 5000;
+
+const redisClient = require("./redisClient/client");
 
 app.use(cors());
 
@@ -11,13 +14,13 @@ const handlers = require("./handlers/handlers");
 const userHandler = require("./handlers/userHandler");
 const UserManager = require("./managers/userManager");
 
-const userManager = UserManager();
+io.on("connection", (socket) => {
+  console.log("a user connected".brightGreen.underline.bold);
 
-// const { handleSignOn, handleSignOut } = require("./handlers/userHandler");
-// const { handleGetBuddies } = require("./handlers/apiHandler");
+  redisClient.set("key", "value", redisClient.print);
+  redisClient.get("key", (err, reply) => console.log(reply));
 
-io.on("connection", socket => {
-  console.log("a user connected");
+  const userManager = UserManager();
 
   const { handleSignOn, handleSignOut } = handlers(
     socket,
@@ -25,13 +28,17 @@ io.on("connection", socket => {
     userManager
   );
 
-  socket.on("sign on", user => handleSignOn(user));
+  socket.on("sign on", (user) => handleSignOn(user));
 
-  socket.on("sign out", user => handleSignOut(user));
+  socket.on("sign out", (user) => handleSignOut(user));
 
   // socket.on("get buddies", package => handleGetBuddies(package, socket));
 
-  // socket.on("disconnect", () => console.log("a user disconnected"));
+  socket.on("disconnect", () =>
+    console.log("a user disconnected".brightRed.underline)
+  );
 });
 
-server.listen(port, () => console.log(`Server listening on port ${port}`));
+server.listen(port, () =>
+  console.log(`server listening on port ${port}`.rainbow.bold)
+);

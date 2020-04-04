@@ -1,4 +1,4 @@
-const client = require("../pgclient/client");
+const client = require("../pgClient/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -27,12 +27,12 @@ function handleSignOn({ screenName, password }, socket, userManager) {
                 } else {
                   const { id } = result.rows[0];
                   jwt.sign({ screenName }, "secretkey", (err, token) => {
-                    socket.emit("signed on", { screenName, token, id });
+                    socket.emit("Signed on", { screenName, token, id });
                     userManager.addOnlineUser(user);
-                    socket.broadcast.emit("updated online/offline users", {
-                      ...userManager.onlineUsers,
-                      ...userManager.offlineUsers
-                    });
+                    socket.broadcast.emit(
+                      "Updated online/offline users",
+                      "isTHISworking"
+                    );
                   });
                 }
               });
@@ -48,12 +48,12 @@ function handleSignOn({ screenName, password }, socket, userManager) {
         } else {
           if (result === true) {
             jwt.sign({ screenName }, "secretkey", (err, token) => {
-              socket.emit("signed on", { screenName, token, id });
+              socket.emit("Signed on", { screenName, token, id });
               userManager.addOnlineUser(user);
-              socket.broadcast.emit("updated online users", {
-                ...userManager.onlineUsers,
-                ...userManager.offlineUsers
-              });
+              socket.broadcast.emit(
+                "Updated online/offline users",
+                "isTHISworking"
+              );
             });
           } else {
             socket.emit("Incorrect password");
@@ -65,5 +65,5 @@ function handleSignOn({ screenName, password }, socket, userManager) {
 }
 
 module.exports = {
-  handleSignOn
+  handleSignOn,
 };

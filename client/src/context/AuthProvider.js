@@ -30,12 +30,15 @@ export default ({ children }) => {
   }, []);
 
   useEffect(() => {
-    socket.on("signed on", response => handleSignOn(response));
+    socket.on("Signed on", response => handleSignOn(response));
   }, [socket]);
 
-  // TEST
   useEffect(() => {
-    socket.on("TEST", res => console.log(res));
+    socket.on("Updated online/offline users", res => console.log(res));
+  }, []);
+
+  useEffect(() => {
+    socket.emit("TEST ADD", { id: 999, name: "I am test" });
   }, []);
 
   // useEffect(() => {

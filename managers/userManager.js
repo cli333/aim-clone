@@ -1,6 +1,4 @@
-const client = require("../pgclient/client");
-
-module.exports = function() {
+module.exports = function () {
   const onlineUsers = new Map();
   const offlineUsers = new Map();
 
@@ -26,6 +24,6 @@ module.exports = function() {
     onlineUsers,
     offlineUsers,
     addOnlineUser,
-    addOfflineUser
+    addOfflineUser,
   };
 };

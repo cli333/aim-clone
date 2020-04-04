@@ -5,9 +5,12 @@ module.exports = function(socket, userHandler, userManager) {
 
   function handleSignOut(user) {
     userManager.addOfflineUser(user);
-    socket.broadcast.emit("updated online/offline users", {
-      ...userManager.onlineUsers,
-      ...userManager.offlineUsers
+    let onlineUsers = userManager.onlineUsers;
+    let offlineUsers = userManager.offlineUsers;
+    socket.emit("Updated online/offline users", {
+      userManager,
+      onlineUsers,
+      offlineUsers
     });
   }
 
