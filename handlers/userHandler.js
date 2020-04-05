@@ -1,85 +1,112 @@
 const pgClient = require("../pgClient/client");
+const redisClient = require("../redisClient/client");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const {
   addOnlineUser,
   removeOnlineUser,
   getOnlineUsers,
   isUserAlreadyOnline,
 } = require("../managers/userManager");
-const { genHash, compareHash, jwtSign } = require("../utils/utils");
 
-function handleSignOn({ screenName, password }, socket) {
-  let query1 = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";
-  let values1 = [screenName];
-  pgClient
-    .query(query1, values1)
-    .then((result1) => {
-      if (result1.rows.length === 0) {
-        genHash(password)
-          .then((hash) => {
-            let query2 =
-              "INSERT INTO users(screenname, password) VALUES($1, $2)";
-            let values2 = [screenName, hash];
-            pgClient
-              .query(query2, values2)
-              .then(() => {
-                pgClient
-                  .query(query1, values1)
-                  .then((result2) => {
-                    jwtSign(screenName)
-                      .then((token) => {
-                        const { id } = result2.rows[0];
-                        socket.emit("Signed on", { screenName, token, id });
-                        // update online users
+const handleSignOn = (user, socket) => {
+  const { screenName } = user;
+  let query = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";
+  let values = [screenName];
+  return pgClient.query(query, values, handlePgClientResponse(user, socket));
+};
 
-                        addOnlineUser({ screenName, id });
-                        getOnlineUsers().then((onlineUsers) => {
-                          socket.broadcast.emit(
-                            "Updated online users",
-                            onlineUsers
-                          );
-                        });
-                      })
-                      .catch((err) => console.log(err));
-                  })
-                  .catch((err) => console.log(err));
-              })
-              .catch((err) => console.log(err));
-          })
-          .catch((err) => console.log(err));
-      } else {
-        const { password: hash, id } = result1.rows[0];
-        isUserAlreadyOnline({ screenName, id }).then((response) => {
-          if (response === 0) {
-            compareHash(password, hash)
-              .then((result) => {
-                if (result === true) {
-                  jwtSign(screenName)
-                    .then((token) => {
-                      socket.emit("Signed on", { screenName, token, id });
-                      // update online users
-                      addOnlineUser({ screenName, id });
-                      // socket.emit("Updated online users", getOnlineUsers())
-                      getOnlineUsers().then((onlineUsers) => {
-                        socket.broadcast.emit(
-                          "Updated online users",
-                          onlineUsers
-                        );
-                      });
-                    })
-                    .catch((err) => console.log(err));
-                } else {
-                  socket.emit("Incorrect password");
-                }
-              })
-              .catch((err) => console.log(err));
-          } else {
-            socket.emit("User already logged in");
-          }
-        });
-      }
-    })
-    .catch((err) => console.log(err));
-}
+const handleFirstSignOn = (user, socket) => (err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    let query = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";
+    let values = [screenName];
+    return pgClient.query(query, values, getToken(user, socket));
+  }
+};
+
+const handlePgClientResponse = (user, socket) => (err, result) => {
+  if (err) {
+    console.log(err);
+  } else if (result.rows.length === 0) {
+    // user not in db
+    // hash password
+    // insert into db
+    // query db
+    // return token
+    console.log("no such user");
+    // return genHash(user, socket);
+  } else {
+    // user in db
+    // compare password to hash
+    // return token
+    console.log("a user found");
+    // const { password, id } = result.rows[0];
+    // userObj = { ...user, hash: password, id };
+    // return isUserOnline(userObj, socket);
+  }
+};
+
+const isUserOnline = (user, socket) => {
+  return redisClient.sismember(
+    "onlineUsers",
+    `${user.id};${user.screenName}`,
+    compareHash(user, socket)
+  );
+};
+
+const compareHash = (user, socket) => (err, result) => {
+  if (err) {
+    console.log(err);
+  } else if (result === 0) {
+    const { password, hash } = user;
+    console.log(126, user);
+    return bcrypt.compare(password, hash, getToken(user, socket));
+  } else {
+    socket.emit("User already logged in");
+  }
+};
+
+const genHash = (user, socket) => {
+  if (err) {
+    console.log(err);
+  } else {
+    const { password } = user;
+    return bcrypt.hash(password, 10, insertUserIntoDb(user, socket));
+  }
+};
+
+const insertUserIntoDb = (user, socket) => (err, hash) => {
+  if (err) {
+    console.log(err);
+  } else {
+    const { screenName } = user;
+    let query = "INSERT INTO users(screenname, password) VALUES($1, $2)";
+    let values = [screenName, hash];
+    return pgClient.query(query, values, handleFirstSignOn(user, socket));
+  }
+};
+
+const getToken = (user, socket) => (err, result) => {
+  if (err) {
+    console.log(err);
+  } else {
+    const userObj = { screenName: user.screenName };
+    return jwt.sign(userObj, "secretkey", emitToken(user, socket));
+  }
+};
+
+const emitToken = (user, socket) => (err, token) => {
+  if (err) {
+    console.log(err);
+  } else {
+    const userObj = { ...user, token };
+    socket.emit("Signed on", userObj);
+    // add user to online redis
+    // get online users and emit
+  }
+};
 
 function handleSignOut(user, socket) {
   removeOnlineUser(user);
