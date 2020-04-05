@@ -13,13 +13,20 @@ const handlers = require("./handlers/handlers");
 io.on("connection", (socket) => {
   console.log("a user connected".brightGreen.underline.bold);
 
-  const { handleSignOn, handleSignOut } = handlers(socket);
+  const {
+    handleSignOn,
+    handleSignOut,
+    handleGetBuddies,
+    handleAddBuddy,
+  } = handlers(socket);
 
   socket.on("sign on", handleSignOn);
 
   socket.on("sign out", handleSignOut);
 
-  // socket.on("get buddies", package => handleGetBuddies(package, socket));
+  socket.on("get buddies", handleGetBuddies);
+
+  socket.on("add buddy", handleAddBuddy);
 
   socket.on("disconnect", () =>
     console.log("a user disconnected".brightRed.underline)

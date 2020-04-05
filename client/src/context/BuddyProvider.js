@@ -11,10 +11,11 @@ export default ({ children }) => {
   const { socket } = useContext(socketCtx);
 
   useEffect(() => {
-    socket.on("Updated online users", (onlineUsers) =>
-      console.log(onlineUsers)
-    );
-  }, [socket]);
+    if (authUser) {
+      socket.emit("get buddies", authUser);
+    }
+    socket.on("Got buddies", (buddies) => console.log(buddies));
+  }, [socket, authUser]);
 
   return (
     <buddyCtx.Provider value={{ offlineBuddies, onlineBuddies }}>
