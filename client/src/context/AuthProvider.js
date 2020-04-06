@@ -29,13 +29,6 @@ export default ({ children }) => {
     }
   }, []);
 
-  // TEST DELETE LATER
-  useEffect(() => {
-    if (authUser) {
-      socket.on(`TEST`, (res) => console.log(res));
-    }
-  }, [authUser, socket]);
-
   useEffect(() => {
     socket.on("Signed on", (response) => handleSignOn(response));
   }, [socket]);

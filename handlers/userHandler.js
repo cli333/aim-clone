@@ -21,16 +21,6 @@ const isUserOnline = (user, socket, io) => {
   );
 };
 
-const getOnlineUsers = (socket) => {
-  return redisClient.smembers("onlineUsers", (err, onlineUsers) => {
-    if (err) {
-      console.log(err);
-    } else {
-      socket.broadcast.emit("Updated online users", toArray(onlineUsers));
-    }
-  });
-};
-
 const handleSignOn = (user, socket, io) => {
   const { screenName } = user;
   let query = "SELECT * FROM users WHERE screenname = $1 LIMIT 1";

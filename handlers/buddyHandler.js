@@ -7,13 +7,13 @@ const handleGetBuddies = (user, socket) => {
   return jwt.verify(token, "secretkey", getBuddies(user, socket));
 };
 
-const handleAddBuddy = (user, buddyName, socket) => {
-  const { token } = user;
-  return jwt.verify(token, "secretkey", addBuddy(user, buddyName, socket));
-};
-
 const handleUpdateBuddies = (io, socket) => {
   redisClient.smembers("onlineUsers", updateBuddies(io, socket));
+};
+
+const handleAddBuddy = (user, buddyName, socket, io) => {
+  const { token } = user;
+  return jwt.verify(token, "secretkey", addBuddy(user, buddyName, socket, io));
 };
 
 const getBuddies = (user, socket, io) => (err, authData) => {
@@ -77,18 +77,6 @@ const emitBuddies = (socket, io, user, buddies) => {
   }
 };
 
-const addBuddy = (user, buddyName, socket) => (err, authData) => {
-  if (err) {
-    console.log(err);
-  } else if (authData) {
-    // query if buddy exists
-    // if not emit buddy not found
-    // else add to pg and emit buddies
-  } else {
-    console.log("bad token");
-  }
-};
-
 const updateBuddies = (io, socket) => (err, onlineUsers) => {
   if (err) {
     console.log(err);
@@ -98,6 +86,43 @@ const updateBuddies = (io, socket) => (err, onlineUsers) => {
       const user = { id, screenName };
       getBuddies(user, socket, io)(null, true);
     }
+  }
+};
+
+const addBuddy = (user, buddyName, socket, io) => (err, authData) => {
+  if (err) {
+    console.log(err);
+  } else if (authData) {
+    // query if buddy exists
+    // if not emit buddy not found
+    // else add buddy to user's friends
+    // and add user to the buddy's friends!!
+    // and update both users buddies lists
+    const query = "SELECT * FROM users WHERE screenname = $1";
+    const values = [buddyName];
+    return pgClient.query(
+      query,
+      values,
+      buddyExists(user, buddyName, socket, io)
+    );
+  } else {
+    console.log("bad token");
+  }
+};
+
+const buddyExists = (user, buddyName, socket, io) => (err, result) => {
+  if (err) {
+    console.log(err);
+  } else if (result.rows.length > 0) {
+    const userId = user.id;
+    const friendId = result.rows[0].id;
+    // insert into friends list the user
+    let query =
+      "UPDATE users SET friends = array_append(friends, $1) WHERE id = $2 AND NOT friends @> ARRAY[$1]::varchar[]";
+    // insert user into friends list of buddy
+  } else {
+    //
+    socket.emit("No such user");
   }
 };
 
