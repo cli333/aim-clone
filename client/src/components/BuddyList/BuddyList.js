@@ -37,21 +37,24 @@ export default ({ buddies, category }) => {
       {open && (
         <ul className="category-type">
           {buddies &&
-            buddies.map((buddy, idx) => (
-              <li
-                className={`${idx === activeIdx ? "active" : ""}`}
-                key={idx}
-                onClick={() => {
-                  setActiveIdx(idx);
-                  handleClick(idx);
-                }}
-                onMouseEnter={() => setActiveBuddy(buddy)}
-                onMouseLeave={() => setActiveBuddy(null)}
-                onDoubleClick={() => handleDoubleClick()}
-              >
-                {buddy}
-              </li>
-            ))}
+            buddies.map(({ buddy }, idx) => {
+              const [id, screenName] = buddy.split(";");
+              return (
+                <li
+                  className={`${idx === activeIdx ? "active" : ""}`}
+                  key={id}
+                  onClick={() => {
+                    setActiveIdx(idx);
+                    handleClick(idx);
+                  }}
+                  onMouseEnter={() => setActiveBuddy(buddy)}
+                  onMouseLeave={() => setActiveBuddy(null)}
+                  onDoubleClick={() => handleDoubleClick()}
+                >
+                  {screenName}
+                </li>
+              );
+            })}
         </ul>
       )}
     </div>

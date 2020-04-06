@@ -12,31 +12,35 @@ const handleAddBuddy = (user, buddyName, socket) => {
   return jwt.verify(token, "secretkey", addBuddy(user, buddyName, socket));
 };
 
-const getBuddies = (user, socket) => (err, authData) => {
+const handleUpdateBuddies = (io, socket) => {
+  redisClient.smembers("onlineUsers", updateBuddies(io, socket));
+};
+
+const getBuddies = (user, socket, io) => (err, authData) => {
   if (err) {
     console.log(err);
   } else if (authData) {
     const { screenName } = user;
     let query = "SELECT friends AS buddies FROM users WHERE screenname = $1";
     let values = [screenName];
-    return pgClient.query(query, values, checkBuddiesStatus(socket));
+    return pgClient.query(query, values, checkBuddiesStatus(socket, io, user));
   } else {
     console.log("bad token");
   }
 };
 
-const checkBuddiesStatus = (socket) => (err, result) => {
+const checkBuddiesStatus = (socket, io, user) => (err, result) => {
   let buddies = result.rows[0].buddies;
   if (err) {
     console.log(err);
   } else if (!buddies) {
     socket.emit("Got buddies", { onlineBuddies: [], offlineBuddies: [] });
   } else {
-    return buildBuddiesList(socket, buddies);
+    return buildBuddiesList(socket, io, user, buddies);
   }
 };
 
-const buildBuddiesList = (socket, buddies) => {
+const buildBuddiesList = (socket, io, user, buddies) => {
   return Promise.all(
     buddies.map((buddy) => {
       return new Promise((resolve, reject) => {
@@ -52,17 +56,25 @@ const buildBuddiesList = (socket, buddies) => {
       });
     })
   )
-    .then((buddies) => emitBuddies(socket, buddies))
+    .then((buddies) => emitBuddies(socket, io, user, buddies))
     .catch((err) => console.log(err));
 };
 
-const emitBuddies = (socket, buddies) => {
+const emitBuddies = (socket, io, user, buddies) => {
   const onlineBuddies = [];
   const offlineBuddies = [];
   buddies.forEach((buddy) =>
     buddy.isOnline ? onlineBuddies.push(buddy) : offlineBuddies.push(buddy)
   );
-  socket.emit("Got buddies", { onlineBuddies, offlineBuddies });
+  if (io) {
+    const { id, screenName } = user;
+    io.to(`${id};${screenName}`).emit("Got buddies", {
+      onlineBuddies,
+      offlineBuddies,
+    });
+  } else {
+    socket.emit("Got buddies", { onlineBuddies, offlineBuddies });
+  }
 };
 
 const addBuddy = (user, buddyName, socket) => (err, authData) => {
@@ -77,4 +89,16 @@ const addBuddy = (user, buddyName, socket) => (err, authData) => {
   }
 };
 
-module.exports = { handleGetBuddies };
+const updateBuddies = (io, socket) => (err, onlineUsers) => {
+  if (err) {
+    console.log(err);
+  } else if (onlineUsers.length > 0) {
+    for (let onlineUser of onlineUsers) {
+      const [id, screenName] = onlineUser.split(";");
+      const user = { id, screenName };
+      getBuddies(user, socket, io)(null, true);
+    }
+  }
+};
+
+module.exports = { handleGetBuddies, handleAddBuddy, handleUpdateBuddies };

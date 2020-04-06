@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import "./SignOnWindow.css";
 import Window from "../Window/Window";
 import useAuth from "../../hooks/useAuth";

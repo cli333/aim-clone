@@ -14,7 +14,15 @@ export default ({ children }) => {
     if (authUser) {
       socket.emit("get buddies", authUser);
     }
-    socket.on("Got buddies", (buddies) => console.log(buddies));
+  }, [socket, authUser]);
+
+  useEffect(() => {
+    if (authUser) {
+      socket.on("Got buddies", (buddies) => {
+        setOfflineBuddies(buddies.offlineBuddies);
+        setOnlineBuddies(buddies.onlineBuddies);
+      });
+    }
   }, [socket, authUser]);
 
   return (
