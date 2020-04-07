@@ -41,8 +41,8 @@ export default () => {
               placeholder={`${errors.screenName || "screen name"}`}
               value={screenName}
               onChange={(e) => {
+                if (Object.keys(errors).length !== 0) setErrors({});
                 setScreenName(e.target.value);
-                setErrors({});
               }}
               disabled={authUser}
             />
@@ -58,8 +58,8 @@ export default () => {
               placeholder={`${errors.password || "password"}`}
               value={password}
               onChange={(e) => {
+                if (Object.keys(errors).length !== 0) setErrors({});
                 setPassword(e.target.value);
-                setErrors({});
               }}
               disabled={authUser}
             />

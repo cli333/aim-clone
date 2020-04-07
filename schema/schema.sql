@@ -8,3 +8,16 @@ CREATE TABLE users
 	UNIQUE
   (screenname)
 )
+
+  UPDATE users 
+SET friends = 
+CASE
+	WHEN array_length(friends, 1) IS NULL THEN array_append(friends, 'dasd2')
+	WHEN NOT friends @> ARRAY['dasd2']::varchar[] THEN array_append(friends, 'dasd2') 
+	ELSE friends
+END
+WHERE screenname = 'dasd'
+
+  UPDATE users
+SET friends = array_remove(friends, '9;test')
+WHERE screenname = 'blank'

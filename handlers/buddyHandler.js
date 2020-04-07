@@ -98,6 +98,8 @@ const addBuddy = (user, buddyName, socket, io) => (err, authData) => {
     // else add buddy to user's friends
     // and add user to the buddy's friends!!
     // and update both users buddies lists
+    // socket.broadcast/emit to both users their updated buddies
+
     const query = "SELECT * FROM users WHERE screenname = $1";
     const values = [buddyName];
     return pgClient.query(
@@ -113,16 +115,43 @@ const addBuddy = (user, buddyName, socket, io) => (err, authData) => {
 const buddyExists = (user, buddyName, socket, io) => (err, result) => {
   if (err) {
     console.log(err);
-  } else if (result.rows.length > 0) {
-    const userId = user.id;
-    const friendId = result.rows[0].id;
-    // insert into friends list the user
+  } else if (
+    result.rows.length > 0 &&
+    result.rows[0].screenname !== user.screenName
+  ) {
+    const { id: friendId, screenname } = result.rows[0];
+    // insert buddy into friends list of user
+
     let query =
-      "UPDATE users SET friends = array_append(friends, $1) WHERE id = $2 AND NOT friends @> ARRAY[$1]::varchar[]";
-    // insert user into friends list of buddy
+      "UPDATE users SET friends = CASE WHEN array_length(friends, 1) IS NULL THEN array_append(friends, $1) WHEN NOT friends @> ARRAY[$1]::varchar[] THEN array_append(friends, $1) ELSE friends END WHERE id = $2";
+    let values = [`${friendId};${screenname}`, user.id];
+    return pgClient.query(
+      query,
+      values,
+      addUserToBuddy(user, buddyName, socket, io)
+    );
   } else {
-    //
     socket.emit("No such user");
+  }
+};
+
+const addUserToBuddy = (user, buddyName, socket, io) => (err, result) => {
+  if (err) {
+    console.log(err);
+  } else if (result.rowCount !== 0) {
+    // insert user into friends list of buddy
+    let query =
+      "UPDATE users SET friends = CASE WHEN array_length(friends, 1) IS NULL THEN array_append(friends, $1) WHEN NOT friends @> ARRAY[$1]::varchar[] THEN array_append(friends, $1) ELSE friends END WHERE screenname = $2";
+    let values = [`${user.id};${user.screenName}`, buddyName];
+    return pgClient.query(query, values, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        getBuddies(user, socket, io)(null, true);
+      }
+    });
+  } else {
+    console.log(152, result);
   }
 };
 

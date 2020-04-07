@@ -85,7 +85,7 @@ const insertUserIntoDb = (user, socket, io) => (err, hash) => {
 const getToken = (user, socket, io) => (err, result) => {
   if (err) {
     console.log(err);
-  } else if (result === true) {
+  } else if (result) {
     const userObj = { screenName: user.screenName };
     return jwt.sign(userObj, "secretkey", emitToken(user, socket, io));
   } else {
