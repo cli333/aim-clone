@@ -10,21 +10,34 @@ export default ({ children }) => {
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
 
+  const handleNewWindow = (buddy) => {
+    const position = {
+      x: lastPosition.x + 25,
+      y: lastPosition.y + 25,
+    };
+    // buddy = {receiver: '${id};${screenName}'}
+    const newWindow = { ...buddy, position };
+    setChatWindows([...chatWindows, newWindow]);
+    setLastPosition(position);
+  };
+
   useEffect(() => {
     if (!authUser) {
       setChatWindows([]);
     }
   }, [authUser]);
 
-  const handleNewWindow = (buddy) => {
-    const position = {
-      x: lastPosition.x + 25,
-      y: lastPosition.y + 25,
-    };
-    const newWindow = { ...buddy, position };
-    setChatWindows([...chatWindows, newWindow]);
-    setLastPosition(position);
-  };
+  useEffect(() => {
+    if (authUser) {
+      // if chat window doesn't exist open a new chat window
+      socket.on("Open chat window", (messageObj) => {
+        // if (chatWindows.filter((c) => c.receiver === messageObj.notMe) !== 0) {
+        //   handleNewWindow(messageObj.notMe);
+        // }
+        console.log("open window");
+      });
+    }
+  }, [authUser, socket, chatWindows, handleNewWindow]);
 
   const handleCloseWindow = (idx) => {
     const newBuddies = chatWindows

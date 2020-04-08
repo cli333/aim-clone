@@ -1,12 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./ChatWindow.css";
 import Window from "../Window/Window";
 import useChatWindow from "../../hooks/useChatWindow";
+import { socketCtx } from "../../context/SocketProvider";
+import { authCtx } from "../../context/AuthProvider";
 
 export default ({ position: { x, y }, receiver }) => {
   const [message, setMessage] = useState("");
   const { handleSubmit } = useChatWindow({ message, setMessage, receiver });
   const screenName = receiver.split(";")[1];
+  const { socket } = useContext(socketCtx);
+  const { authUser } = useContext(authCtx);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (authUser) {
+      socket.on("Sent message", (messageObj) => {
+        // if notMe === receiver
+        // append to list
+        // setMessages([...messages, messageObj]);
+
+        // FIX THIS WHY setMessages doesn't work????
+        const { me, notMe, message } = messageObj;
+        const target = document.querySelector(".chatwindow");
+        let newEl = document.createElement("li");
+        newEl.innerHTML = `<span className="me">${
+          me.split(";")[1]
+        }</span>:${" "}<span>${message}</span>`;
+        target.appendChild(newEl);
+      });
+    }
+  }, [authUser, socket]);
 
   return (
     <Window
@@ -21,13 +45,12 @@ export default ({ position: { x, y }, receiver }) => {
       }}
     >
       <ul className="chatwindow">
-        <li>
-          <span className="user">smixity</span>: <span>Hey what's up?</span>
-        </li>
-        <li>
-          <span className="user">Me</span>:{" "}
-          <span>Nothing much ado here!!!</span>
-        </li>
+        {messages.map((msg) => (
+          <li>
+            <span className="me">{msg.me.split(";")[1]}</span>:{" "}
+            <span>{msg.message}</span>
+          </li>
+        ))}
       </ul>
 
       <hr className="chat-divider" />
@@ -37,6 +60,12 @@ export default ({ position: { x, y }, receiver }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         ></textarea>
+        <button className="send-button" onClick={(e) => {}}>
+          <img src="/send.png" alt="send" />
+          <div>
+            <span>S</span>end
+          </div>
+        </button>
       </form>
     </Window>
   );

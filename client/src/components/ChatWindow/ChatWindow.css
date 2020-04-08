@@ -23,9 +23,14 @@
   font-size: 1.4rem;
 }
 
-.chatwindow > li > .user {
+.chatwindow > li > .me {
   font-weight: bolder;
   color: red;
+}
+
+.chatwindow > li > .not-me {
+  font-weight: bolder;
+  color: blue;
 }
 
 .chat-divider {
@@ -35,6 +40,8 @@
 
 .chatfield-wrapper {
   margin-left: 6px;
+  height: 225px;
+  position: relative;
 }
 
 .chatfield {
@@ -52,4 +59,28 @@
   resize: none;
   line-height: 1.7rem;
   font-size: 1.4rem;
+}
+
+.send-button {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  height: 65px;
+  width: 65px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bolder;
+}
+
+.send-button > img {
+  width: 100%;
+  filter: blur(0.5px);
+  margin: 8px auto;
+}
+
+.send-button > div > span {
+  text-decoration: underline;
 }
