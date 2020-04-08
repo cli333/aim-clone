@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { authCtx } from "./AuthProvider";
 import { socketCtx } from "./SocketProvider";
+import { buddyCtx } from "./BuddyProvider";
 
 export const chatWindowsCtx = createContext();
 
@@ -9,6 +10,17 @@ export default ({ children }) => {
   const [lastPosition, setLastPosition] = useState({ x: 400, y: 200 });
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
+  const { onlineBuddies } = useContext(buddyCtx);
+
+  useEffect(() => {
+    const flattenedOnlineBuddies = onlineBuddies.map((o) => o.buddy);
+    const filteredWindows = chatWindows.filter((c) =>
+      flattenedOnlineBuddies.includes(c.receiver)
+    );
+    if (filteredWindows.length !== chatWindows.length) {
+      setChatWindows(filteredWindows);
+    }
+  }, [onlineBuddies, chatWindows]);
 
   useEffect(() => {
     if (!authUser) {
@@ -21,14 +33,26 @@ export default ({ children }) => {
       // if chat window doesn't exist open a new chat window
       socket.on("Open chat window", (messageObj) => {
         let openWindow = chatWindows.filter(
-          (c) => c.receiver === messageObj.notMe
+          (c) => c.receiver === messageObj.receiver
         );
+        console.log({ chatWindows, openWindow });
         if (openWindow.length === 0) {
-          handleNewWindow({ receiver: messageObj.notMe });
+          ((buddy) => {
+            const position = {
+              x: lastPosition.x + 25,
+              y: lastPosition.y + 25,
+            };
+            const newWindow = {
+              receiver: buddy.receiver || buddy.user,
+              position,
+            };
+            setChatWindows([...chatWindows, newWindow]);
+            setLastPosition(position);
+          })({ receiver: messageObj.receiver });
         }
       });
     }
-  }, [authUser, socket, chatWindows]);
+  }, [authUser, socket, chatWindows, lastPosition]);
 
   function handleNewWindow(buddy) {
     const position = {

@@ -25,12 +25,12 @@
 
 .chatwindow > li > .me {
   font-weight: bolder;
-  color: red;
+  color: blue;
 }
 
 .chatwindow > li > .not-me {
   font-weight: bolder;
-  color: blue;
+  color: red;
 }
 
 .chat-divider {
@@ -83,4 +83,8 @@
 
 .send-button > div > span {
   text-decoration: underline;
+}
+
+.chatfield-wrapper > .banner {
+  height: 60px;
 }

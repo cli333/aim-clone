@@ -23,6 +23,9 @@ export default ({ position: { x, y }, receiver }) => {
     }
   }, [authUser, socket]);
 
+  console.log(messages);
+  console.log(`${authUser.id};${authUser.screenName}`);
+
   return (
     <Window
       header={`${screenName} - Instant Message`}
@@ -36,9 +39,9 @@ export default ({ position: { x, y }, receiver }) => {
       }}
     >
       <ul className="chatwindow">
-        {messages.map((msg) =>
-          message.me === `${authUser.id};${authUser.screenName}` ? (
-            <li>
+        {messages.map((msg, idx) =>
+          msg.me === `${authUser.id};${authUser.screenName}` ? (
+            <li key={idx}>
               <span className="me">{msg.me.split(";")[1]}</span>:{" "}
               <span>{msg.message}</span>
             </li>
@@ -58,6 +61,7 @@ export default ({ position: { x, y }, receiver }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         ></textarea>
+        <img src="/banner1.gif" alt="90sbanner" className="banner" />
         <button className="send-button" onClick={(e) => {}}>
           <img src="/send.png" alt="send" />
           <div>

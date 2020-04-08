@@ -17,15 +17,16 @@ const emitMessage = (messageObj, socket, io) => (err, authData) => {
       message,
     } = messageObj;
     const toSenderObj = {
-      me: `${id};${screenName}`,
-      notMe: receiver,
+      sender: `${id};${screenName}`,
+      receiver,
       message,
     };
     const toReceiverObj = {
-      me: receiver,
-      notMe: `${id};${screenName}`,
+      sender: `${id};${screenName}`,
+      receiver,
       message,
     };
+    console.log(29, { toSenderObj, toReceiverObj });
     socket.emit("Sent message", toSenderObj);
     io.to(receiver).emit("Open chat window", toReceiverObj);
     io.to(receiver).emit("Sent message", toReceiverObj);

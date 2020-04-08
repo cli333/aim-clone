@@ -7,21 +7,6 @@ export default ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const { socket } = useContext(socketCtx);
 
-  const handleSignOn = (response) => {
-    setAuthUser(response);
-    localStorage.setItem("ROLdata", JSON.stringify(response));
-  };
-
-  const handleSignOut = (e) => {
-    e.preventDefault();
-    setAuthUser(null);
-    localStorage.removeItem("ROLdata");
-    socket.emit("sign out", {
-      screenName: authUser.screenName,
-      id: authUser.id,
-    });
-  };
-
   useEffect(() => {
     const user = localStorage.getItem("ROLdata");
     if (user) {
@@ -32,6 +17,21 @@ export default ({ children }) => {
   useEffect(() => {
     socket.on("Signed on", (response) => handleSignOn(response));
   }, [socket]);
+
+  function handleSignOn(response) {
+    setAuthUser(response);
+    localStorage.setItem("ROLdata", JSON.stringify(response));
+  }
+
+  function handleSignOut(e) {
+    e.preventDefault();
+    setAuthUser(null);
+    localStorage.removeItem("ROLdata");
+    socket.emit("sign out", {
+      screenName: authUser.screenName,
+      id: authUser.id,
+    });
+  }
 
   // useEffect(() => {
   //   return () => localStorage.removeItem("ROLdata");
