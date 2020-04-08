@@ -5,10 +5,10 @@ export default (onClick, onDoubleClick) => {
   const {
     appendPendingPromise,
     removePendingPromise,
-    clearPendingPromises
+    clearPendingPromises,
   } = useCancellablePromises();
 
-  const handleClick = idx => {
+  function handleClick(idx) {
     clearPendingPromises();
     const waitForClick = cancellablePromise(delay(300));
     appendPendingPromise(waitForClick);
@@ -18,16 +18,16 @@ export default (onClick, onDoubleClick) => {
         removePendingPromise(waitForClick);
         onClick(idx);
       })
-      .catch(err => {
+      .catch((err) => {
         removePendingPromise(waitForClick);
         if (!err.isCancelled) throw err.error;
       });
-  };
+  }
 
-  const handleDoubleClick = () => {
+  function handleDoubleClick() {
     clearPendingPromises();
     onDoubleClick();
-  };
+  }
 
   return { handleClick, handleDoubleClick };
 };

@@ -18,16 +18,7 @@ export default ({ position: { x, y }, receiver }) => {
       socket.on("Sent message", (messageObj) => {
         // if notMe === receiver
         // append to list
-        // setMessages([...messages, messageObj]);
-
-        // FIX THIS WHY setMessages doesn't work????
-        const { me, notMe, message } = messageObj;
-        const target = document.querySelector(".chatwindow");
-        let newEl = document.createElement("li");
-        newEl.innerHTML = `<span className="me">${
-          me.split(";")[1]
-        }</span>:${" "}<span>${message}</span>`;
-        target.appendChild(newEl);
+        setMessages((messages) => [...messages, messageObj]);
       });
     }
   }, [authUser, socket]);
@@ -45,12 +36,19 @@ export default ({ position: { x, y }, receiver }) => {
       }}
     >
       <ul className="chatwindow">
-        {messages.map((msg) => (
-          <li>
-            <span className="me">{msg.me.split(";")[1]}</span>:{" "}
-            <span>{msg.message}</span>
-          </li>
-        ))}
+        {messages.map((msg) =>
+          message.me === `${authUser.id};${authUser.screenName}` ? (
+            <li>
+              <span className="me">{msg.me.split(";")[1]}</span>:{" "}
+              <span>{msg.message}</span>
+            </li>
+          ) : (
+            <li>
+              <span className="not-me">{msg.notMe.split(";")[1]}</span>:{" "}
+              <span>{msg.message}</span>
+            </li>
+          )
+        )}
       </ul>
 
       <hr className="chat-divider" />

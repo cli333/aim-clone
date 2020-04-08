@@ -10,17 +10,6 @@ export default ({ children }) => {
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
 
-  const handleNewWindow = (buddy) => {
-    const position = {
-      x: lastPosition.x + 25,
-      y: lastPosition.y + 25,
-    };
-    // buddy = {receiver: '${id};${screenName}'}
-    const newWindow = { ...buddy, position };
-    setChatWindows([...chatWindows, newWindow]);
-    setLastPosition(position);
-  };
-
   useEffect(() => {
     if (!authUser) {
       setChatWindows([]);
@@ -31,20 +20,38 @@ export default ({ children }) => {
     if (authUser) {
       // if chat window doesn't exist open a new chat window
       socket.on("Open chat window", (messageObj) => {
-        // if (chatWindows.filter((c) => c.receiver === messageObj.notMe) !== 0) {
-        //   handleNewWindow(messageObj.notMe);
-        // }
-        console.log("open window");
+        let openWindow = chatWindows.filter(
+          (c) => c.receiver === messageObj.notMe
+        );
+        if (openWindow.length === 0) {
+          handleNewWindow({ receiver: messageObj.notMe });
+        }
       });
     }
-  }, [authUser, socket, chatWindows, handleNewWindow]);
+  }, [authUser, socket, chatWindows]);
 
-  const handleCloseWindow = (idx) => {
+  function handleNewWindow(buddy) {
+    const position = {
+      x: lastPosition.x + 25,
+      y: lastPosition.y + 25,
+    };
+    // buddy = {receiver: '${id};${screenName}'}
+    let openWindow = chatWindows.filter(
+      (c) => c.receiver === buddy.receiver || buddy.user
+    );
+    if (openWindow.length === 0) {
+      const newWindow = { receiver: buddy.receiver || buddy.user, position };
+      setChatWindows([...chatWindows, newWindow]);
+      setLastPosition(position);
+    }
+  }
+
+  function handleCloseWindow(idx) {
     const newBuddies = chatWindows
       .slice(0, idx)
       .concat(chatWindows.slice(idx + 1));
     setChatWindows(newBuddies);
-  };
+  }
 
   return (
     <chatWindowsCtx.Provider

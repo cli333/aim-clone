@@ -27,6 +27,7 @@ const emitMessage = (messageObj, socket, io) => (err, authData) => {
       message,
     };
     socket.emit("Sent message", toSenderObj);
+    io.to(receiver).emit("Open chat window", toReceiverObj);
     io.to(receiver).emit("Sent message", toReceiverObj);
   } else {
     console.log("bad token");

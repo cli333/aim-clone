@@ -14,8 +14,6 @@ const handlers = require("./handlers/handlers");
 io.on("connection", (socket) => {
   console.log("a user connected".brightGreen.underline.bold);
 
-  redisClient.expire("onlineUsers", 7200);
-
   const {
     handleSignOn,
     handleSignOut,
@@ -34,9 +32,10 @@ io.on("connection", (socket) => {
 
   socket.on("send message", handleMessage);
 
-  socket.on("disconnect", () =>
-    console.log("a user disconnected".brightRed.underline)
-  );
+  socket.on("disconnect", () => {
+    console.log("a user disconnected".brightRed.underline);
+    redisClient.expire("onlineUsers", 7200);
+  });
 });
 
 server.listen(port, () =>

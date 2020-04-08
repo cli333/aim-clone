@@ -19,10 +19,9 @@ export default ({ buddies, category }) => {
   }
 
   function onDoubleClick() {
-    // if (category === "online") {
-    //   handleNewWindow({ user: activeBuddy });
-    // }
-    handleNewWindow({ receiver: activeBuddy });
+    if (category === "Online") {
+      handleNewWindow({ user: activeBuddy });
+    }
   }
 
   return (
