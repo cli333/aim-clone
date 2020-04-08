@@ -1,5 +1,6 @@
 const userHandler = require("./userHandler");
 const buddyHandler = require("./buddyHandler");
+const messageHandler = require("./messageHandler");
 
 module.exports = function (socket, io) {
   const handleSignOn = (user) => {
@@ -18,5 +19,15 @@ module.exports = function (socket, io) {
     buddyHandler.handleAddBuddy(user, buddyName, socket, io);
   };
 
-  return { handleSignOn, handleSignOut, handleGetBuddies, handleAddBuddy };
+  const handleMessage = (messageObj) => {
+    messageHandler.handleMessage(messageObj, socket, io);
+  };
+
+  return {
+    handleSignOn,
+    handleSignOut,
+    handleGetBuddies,
+    handleAddBuddy,
+    handleMessage,
+  };
 };

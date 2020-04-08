@@ -8,13 +8,15 @@ import { authCtx } from "./context/AuthProvider";
 
 export default () => {
   const { authUser } = useContext(authCtx);
-  const { buddies } = useContext(chatWindowsCtx);
+  const { chatWindows } = useContext(chatWindowsCtx);
 
   return (
     <React.Fragment>
       <SignOnWindow />
       {authUser && <BuddyWindow />}
-      {buddies.length > 0 && buddies.map(buddy => <ChatWindow {...buddy} />)}
+      {authUser && chatWindows.length > 0
+        ? chatWindows.map((buddy) => <ChatWindow {...buddy} />)
+        : null}
     </React.Fragment>
   );
 };

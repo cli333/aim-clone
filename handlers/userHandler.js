@@ -2,7 +2,6 @@ const pgClient = require("../pgClient/client");
 const redisClient = require("../redisClient/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { toArray } = require("../utils/utils");
 const { handleUpdateBuddies } = require("./buddyHandler");
 
 const addOnlineUser = (user) => {

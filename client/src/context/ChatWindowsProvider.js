@@ -1,29 +1,41 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { authCtx } from "./AuthProvider";
+import { socketCtx } from "./SocketProvider";
 
 export const chatWindowsCtx = createContext();
 
 export default ({ children }) => {
-  const [buddies, setBuddies] = useState([]);
+  const [chatWindows, setChatWindows] = useState([]);
   const [lastPosition, setLastPosition] = useState({ x: 400, y: 200 });
+  const { authUser } = useContext(authCtx);
+  const { socket } = useContext(socketCtx);
 
-  const handleNewWindow = buddy => {
+  useEffect(() => {
+    if (!authUser) {
+      setChatWindows([]);
+    }
+  }, [authUser]);
+
+  const handleNewWindow = (buddy) => {
     const position = {
       x: lastPosition.x + 25,
-      y: lastPosition.y + 25
+      y: lastPosition.y + 25,
     };
-    const newBuddy = { ...buddy, position };
-    setBuddies([...buddies, newBuddy]);
+    const newWindow = { ...buddy, position };
+    setChatWindows([...chatWindows, newWindow]);
     setLastPosition(position);
   };
 
-  const handleCloseWindow = idx => {
-    const newBuddies = buddies.slice(0, idx).concat(buddies.slice(idx + 1));
-    setBuddies(newBuddies);
+  const handleCloseWindow = (idx) => {
+    const newBuddies = chatWindows
+      .slice(0, idx)
+      .concat(chatWindows.slice(idx + 1));
+    setChatWindows(newBuddies);
   };
 
   return (
     <chatWindowsCtx.Provider
-      value={{ buddies, handleNewWindow, handleCloseWindow }}
+      value={{ chatWindows, handleNewWindow, handleCloseWindow }}
     >
       {children}
     </chatWindowsCtx.Provider>

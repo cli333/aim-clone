@@ -21,6 +21,7 @@ io.on("connection", (socket) => {
     handleSignOut,
     handleGetBuddies,
     handleAddBuddy,
+    handleMessage,
   } = handlers(socket, io);
 
   socket.on("sign on", handleSignOn);
@@ -30,6 +31,8 @@ io.on("connection", (socket) => {
   socket.on("get buddies", handleGetBuddies);
 
   socket.on("add buddy", handleAddBuddy);
+
+  socket.on("send message", handleMessage);
 
   socket.on("disconnect", () =>
     console.log("a user disconnected".brightRed.underline)

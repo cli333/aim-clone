@@ -68,7 +68,6 @@ const emitBuddies = (socket, io, user, buddies) => {
   );
   if (io) {
     const { id, screenName } = user;
-    console.log(71, `${id};${screenName}`);
     io.to(`${id};${screenName}`).emit("Got buddies", {
       onlineBuddies,
       offlineBuddies,
@@ -83,7 +82,6 @@ const updateBuddies = (io, socket) => (err, onlineUsers) => {
     console.log(err);
   } else if (onlineUsers.length > 0) {
     for (let onlineUser of onlineUsers) {
-      console.log(85, onlineUser);
       const [id, screenName] = onlineUser.split(";");
       const user = { id, screenName };
       getBuddies(user, socket, io)(null, true);
@@ -95,13 +93,6 @@ const addBuddy = (user, buddyName, socket, io) => (err, authData) => {
   if (err) {
     console.log(err);
   } else if (authData) {
-    // query if buddy exists
-    // if not emit buddy not found
-    // else add buddy to user's friends
-    // and add user to the buddy's friends!!
-    // and update both users buddies lists
-    // socket.broadcast/emit to both users their updated buddies
-
     const query = "SELECT * FROM users WHERE screenname = $1";
     const values = [buddyName];
     return pgClient.query(

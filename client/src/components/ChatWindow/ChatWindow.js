@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ChatWindow.css";
 import Window from "../Window/Window";
+import useChatWindow from "../../hooks/useChatWindow";
 
-export default ({ position: { x, y } }) => {
+export default ({ position: { x, y }, receiver }) => {
+  const [message, setMessage] = useState("");
+  const { handleSubmit } = useChatWindow({ message, setMessage, receiver });
+  const screenName = receiver.split(";")[1];
+
   return (
     <Window
-      header="smixity - Instant Message"
+      header={`${screenName} - Instant Message`}
       handle="chat-window"
       style={{
         position: "absolute",
         width: "550px",
         height: "500px",
         top: `${y}px`,
-        left: `${x}px`
+        left: `${x}px`,
       }}
     >
       <ul className="chatwindow">
@@ -26,8 +31,12 @@ export default ({ position: { x, y } }) => {
       </ul>
 
       <hr className="chat-divider" />
-      <form className="chatfield-wrapper">
-        <textarea className="chatfield"></textarea>
+      <form className="chatfield-wrapper" onSubmit={(e) => handleSubmit(e)}>
+        <textarea
+          className="chatfield"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        ></textarea>
       </form>
     </Window>
   );
