@@ -14,7 +14,7 @@ export default ({ children, header, handle, defaultPosition, style }) => {
           <img className="icon" src="/icon.png" alt="icon" />
           {header}
 
-          <button className="button">X</button>
+          {/* <button className="button">X</button> */}
         </div>
         {children}
       </div>

@@ -1,9 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const handleMessage = (messageObj, socket, io) => {
-  const {
-    sender: { token },
-  } = messageObj;
+  const { token } = messageObj;
   return jwt.verify(token, "secretkey", emitMessage(messageObj, socket, io));
 };
 
@@ -11,25 +9,37 @@ const emitMessage = (messageObj, socket, io) => (err, authData) => {
   if (err) {
     console.log(err);
   } else if (authData) {
-    const {
-      sender: { id, screenName },
+    const { sender, receiver, room, message } = messageObj;
+    // const {
+    //   sender: { id, screenName },
+    //   receiver,
+    //   message,
+    // } = messageObj;
+    // const newMessageObj = {
+    //   sender: `${id};${screenName}`,
+    //   receiver,
+    //   message,
+    // };
+    // socket.emit("Sent message", newMessageObj);
+    // io.to(receiver).emit("Open chat window", newMessageObj);
+    // io.to(receiver).emit("Sent message", newMessageObj);
+
+    // socket joins the room
+    const newMessageObj = {
+      sender,
       receiver,
-      message,
-    } = messageObj;
-    const toSenderObj = {
-      sender: `${id};${screenName}`,
-      receiver,
+      room,
       message,
     };
-    const toReceiverObj = {
-      sender: `${id};${screenName}`,
-      receiver,
-      message,
-    };
-    console.log(29, { toSenderObj, toReceiverObj });
-    socket.emit("Sent message", toSenderObj);
-    io.to(receiver).emit("Open chat window", toReceiverObj);
-    io.to(receiver).emit("Sent message", toReceiverObj);
+    // sender joins the room
+    socket.join(room);
+    // send the message to receiver
+    io.to(receiver).emit("Open chat window", newMessageObj);
+    // send the message to everyone in the room including sender
+    setTimeout(() => {
+      // HANDLE THIS LATER
+      io.in(room).emit("Sent message", newMessageObj);
+    }, 100);
   } else {
     console.log("bad token");
   }

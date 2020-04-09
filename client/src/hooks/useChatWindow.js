@@ -2,16 +2,33 @@ import { useContext } from "react";
 import { authCtx } from "../context/AuthProvider";
 import { socketCtx } from "../context/SocketProvider";
 
-export default ({ message, receiver, setMessage }) => {
+export default ({ messageInput, receiver, setMessageInput, room }) => {
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
 
-  function handleSubmit(e) {
+  /* 
+    MESSAGE OBJ
+      {
+        sender,
+        receiver,
+        room,
+        message,
+        token
+      }
+  */
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const messageObj = { sender: authUser, receiver, message };
+    const messageObj = {
+      sender: `${authUser.id};${authUser.screenName}`,
+      receiver,
+      room,
+      message: messageInput,
+      token: authUser.token,
+    };
     socket.emit("send message", messageObj);
-    setMessage("");
-  }
+    setMessageInput("");
+  };
 
   return { handleSubmit };
 };

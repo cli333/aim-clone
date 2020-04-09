@@ -15,7 +15,7 @@ export default () => {
       <SignOnWindow />
       {authUser && <BuddyWindow />}
       {authUser && chatWindows.length > 0
-        ? chatWindows.map((buddy, idx) => <ChatWindow key={idx} {...buddy} />)
+        ? chatWindows.map((window, idx) => <ChatWindow key={idx} {...window} />)
         : null}
     </React.Fragment>
   );

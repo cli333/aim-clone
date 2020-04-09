@@ -12,6 +12,8 @@ app.use(cors());
 const handlers = require("./handlers/handlers");
 
 io.on("connection", (socket) => {
+  redisClient.expire("onlineUsers", 1);
+
   console.log("a user connected".brightGreen.underline.bold);
 
   const {
@@ -20,6 +22,7 @@ io.on("connection", (socket) => {
     handleGetBuddies,
     handleAddBuddy,
     handleMessage,
+    handleJoin,
   } = handlers(socket, io);
 
   socket.on("sign on", handleSignOn);
@@ -32,9 +35,10 @@ io.on("connection", (socket) => {
 
   socket.on("send message", handleMessage);
 
+  socket.on("join room", handleJoin);
+
   socket.on("disconnect", () => {
     console.log("a user disconnected".brightRed.underline);
-    redisClient.expire("onlineUsers", 7200);
   });
 });
 

@@ -7,31 +7,31 @@ export default ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const { socket } = useContext(socketCtx);
 
-  useEffect(() => {
-    const user = localStorage.getItem("ROLdata");
-    if (user) {
-      setAuthUser(JSON.parse(user));
-    }
-  }, []);
+  const handleSignOn = (authObj) => {
+    setAuthUser(authObj);
+    // localStorage.setItem("ROLdata", JSON.stringify(response));
+  };
 
-  useEffect(() => {
-    socket.on("Signed on", (response) => handleSignOn(response));
-  }, [socket]);
-
-  function handleSignOn(response) {
-    setAuthUser(response);
-    localStorage.setItem("ROLdata", JSON.stringify(response));
-  }
-
-  function handleSignOut(e) {
-    e.preventDefault();
+  const handleSignOut = (e) => {
+    if (e) e.preventDefault();
     setAuthUser(null);
-    localStorage.removeItem("ROLdata");
+    // localStorage.removeItem("ROLdata");
     socket.emit("sign out", {
       screenName: authUser.screenName,
       id: authUser.id,
     });
-  }
+  };
+
+  // useEffect(() => {
+  //   const user = localStorage.getItem("ROLdata");
+  //   if (user) {
+  //     setAuthUser(JSON.parse(user));
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    socket.on("Signed on", (response) => handleSignOn(response));
+  }, [socket]);
 
   // useEffect(() => {
   //   return () => localStorage.removeItem("ROLdata");

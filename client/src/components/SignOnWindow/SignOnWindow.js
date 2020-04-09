@@ -24,7 +24,7 @@ export default () => {
     >
       <form className="signon-body">
         <div className="logo-wrapper">
-          <img src="/logo.png" alt="logo" className="logo" />
+          <img src="/logo3.png" alt="logo" className="logo" />
         </div>
         <hr className="divider" />
         <div className="signon-bottom">

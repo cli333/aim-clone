@@ -7,6 +7,7 @@ export const buddyCtx = createContext();
 export default ({ children }) => {
   const [offlineBuddies, setOfflineBuddies] = useState([]);
   const [onlineBuddies, setOnlineBuddies] = useState([]);
+  const [totalBuddies, setTotalBuddies] = useState(0);
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
 
@@ -21,12 +22,15 @@ export default ({ children }) => {
       socket.on("Got buddies", (buddies) => {
         setOfflineBuddies(buddies.offlineBuddies);
         setOnlineBuddies(buddies.onlineBuddies);
+        setTotalBuddies(
+          buddies.offlineBuddies.length + buddies.onlineBuddies.length
+        );
       });
     }
   }, [socket, authUser]);
 
   return (
-    <buddyCtx.Provider value={{ offlineBuddies, onlineBuddies }}>
+    <buddyCtx.Provider value={{ offlineBuddies, onlineBuddies, totalBuddies }}>
       {children}
     </buddyCtx.Provider>
   );

@@ -9,7 +9,7 @@ import useBuddy from "../../hooks/useBuddy";
 export default () => {
   const [displayAdd, setDisplayAdd] = useState(false);
   const { authUser } = useContext(authCtx);
-  const { onlineBuddies, offlineBuddies } = useContext(buddyCtx);
+  const { onlineBuddies, offlineBuddies, totalBuddies } = useContext(buddyCtx);
   const [input, setInput] = useState("");
   const { handleSubmit, errors, setErrors } = useBuddy({
     input,
@@ -27,8 +27,16 @@ export default () => {
         <img src="/banner.png" alt="banner" />
       </div>
       <div className="buddy-list">
-        <BuddyList buddies={onlineBuddies} category={"Online"} />
-        <BuddyList buddies={offlineBuddies} category={"Offline"} />
+        <BuddyList
+          buddies={onlineBuddies}
+          category={"Online"}
+          totalBuddies={totalBuddies}
+        />
+        <BuddyList
+          buddies={offlineBuddies}
+          category={"Offline"}
+          totalBuddies={totalBuddies}
+        />
       </div>
       <div className="buddy-form">
         <button onClick={() => setDisplayAdd(!displayAdd)}>

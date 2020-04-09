@@ -23,11 +23,16 @@ module.exports = function (socket, io) {
     messageHandler.handleMessage(messageObj, socket, io);
   };
 
+  const handleJoin = (room) => {
+    socket.join(room);
+  };
+
   return {
     handleSignOn,
     handleSignOut,
     handleGetBuddies,
     handleAddBuddy,
     handleMessage,
+    handleJoin,
   };
 };

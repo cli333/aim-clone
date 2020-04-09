@@ -3,7 +3,7 @@ import "./BuddyList.css";
 import useClick from "../../hooks/useClick";
 import { chatWindowsCtx } from "../../context/ChatWindowsProvider";
 
-export default ({ buddies, category }) => {
+export default ({ buddies, category, totalBuddies }) => {
   const [open, setOpen] = useState(true);
   const [activeIdx, setActiveIdx] = useState(null);
   const [activeBuddy, setActiveBuddy] = useState(null);
@@ -20,7 +20,7 @@ export default ({ buddies, category }) => {
 
   function onDoubleClick() {
     if (category === "Online") {
-      handleNewWindow({ user: activeBuddy });
+      handleNewWindow(activeBuddy);
     }
   }
 
@@ -35,7 +35,12 @@ export default ({ buddies, category }) => {
           🔽
         </span>
       )}
-      <span>{category}</span>
+      <span>
+        {category}{" "}
+        <span
+          style={{ fontWeight: "100" }}
+        >{`(${buddies.length}/${totalBuddies})`}</span>
+      </span>
       {open && (
         <ul className="category-type">
           {buddies &&
