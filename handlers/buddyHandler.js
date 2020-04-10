@@ -2,19 +2,44 @@ const pgClient = require("../pgclient/client");
 const redisClient = require("../redisClient/client");
 const jwt = require("jsonwebtoken");
 
+/* 
+  chain #1
+  step 0
+  verify token
+*/
+
 const handleGetBuddies = (user, socket) => {
   const { token } = user;
   return jwt.verify(token, "secretkey", getBuddies(user, socket));
 };
 
+/* 
+  chain #3
+  step 0
+  in user handler, when user signs on trickle buddy list updates down to online users
+  query redis for online users
+*/
+
 const handleUpdateBuddies = (io, socket) => {
   redisClient.smembers("onlineUsers", updateBuddies(io, socket));
 };
+
+/* 
+  chain #2
+  step 0
+  verify token
+*/
 
 const handleAddBuddy = (user, buddyName, socket, io) => {
   const { token } = user;
   return jwt.verify(token, "secretkey", addBuddy(user, buddyName, socket, io));
 };
+
+/* 
+  chain #1
+  step 1
+  query pg for buddies
+*/
 
 const getBuddies = (user, socket, io) => (err, authData) => {
   if (err) {
@@ -29,6 +54,13 @@ const getBuddies = (user, socket, io) => (err, authData) => {
   }
 };
 
+/* 
+  chain #1
+  step 2
+  no buddies, emit no buddies
+  build buddy list
+*/
+
 const checkBuddiesStatus = (socket, io, user) => (err, result) => {
   let buddies = result.rows[0].buddies;
   if (err) {
@@ -39,6 +71,12 @@ const checkBuddiesStatus = (socket, io, user) => (err, result) => {
     return buildBuddiesList(socket, io, user, buddies);
   }
 };
+
+/*
+  chain #1
+  step 3
+  map buddies list to redis query of online users
+*/
 
 const buildBuddiesList = (socket, io, user, buddies) => {
   return Promise.all(
@@ -60,6 +98,14 @@ const buildBuddiesList = (socket, io, user, buddies) => {
     .catch((err) => console.log(err));
 };
 
+/* 
+  chain #1
+  step 4
+  build separate lists
+  if io, emit list to a room
+  else send updates to the user
+*/
+
 const emitBuddies = (socket, io, user, buddies) => {
   const onlineBuddies = [];
   const offlineBuddies = [];
@@ -77,6 +123,13 @@ const emitBuddies = (socket, io, user, buddies) => {
   }
 };
 
+/* 
+  chain #3
+  step 2
+  for each online user, send buddy updates
+  go to chain #1 step 1
+*/
+
 const updateBuddies = (io, socket) => (err, onlineUsers) => {
   if (err) {
     console.log(err);
@@ -88,6 +141,12 @@ const updateBuddies = (io, socket) => (err, onlineUsers) => {
     }
   }
 };
+
+/*
+  chain #2
+  step 1
+  query pg for buddy
+*/
 
 const addBuddy = (user, buddyName, socket, io) => (err, authData) => {
   if (err) {
@@ -105,6 +164,13 @@ const addBuddy = (user, buddyName, socket, io) => (err, authData) => {
   }
 };
 
+/*
+  chain #2
+  step 2
+  if buddy and buddy is not the user, update user's friends list
+  else emit no buddy
+*/
+
 const buddyExists = (user, buddyName, socket, io) => (err, result) => {
   if (err) {
     console.log(err);
@@ -113,8 +179,6 @@ const buddyExists = (user, buddyName, socket, io) => (err, result) => {
     result.rows[0].screenname !== user.screenName
   ) {
     const { id: friendId, screenname } = result.rows[0];
-    // insert buddy into friends list of user
-
     let query =
       "UPDATE users SET friends = CASE WHEN array_length(friends, 1) IS NULL THEN array_append(friends, $1) WHEN NOT friends @> ARRAY[$1]::varchar[] THEN array_append(friends, $1) ELSE friends END WHERE id = $2";
     let values = [`${friendId};${screenname}`, user.id];
@@ -128,11 +192,18 @@ const buddyExists = (user, buddyName, socket, io) => (err, result) => {
   }
 };
 
+/* 
+  chain #2
+  step 3
+  add user to the buddy's friends list
+  then chain #1 step 1
+  pass in io, so buddy list updates will be passed to the room that the buddy occupies
+*/
+
 const addUserToBuddy = (user, buddyName, socket, io) => (err, result) => {
   if (err) {
     console.log(err);
   } else if (result.rowCount !== 0) {
-    // insert user into friends list of buddy
     let query =
       "UPDATE users SET friends = CASE WHEN array_length(friends, 1) IS NULL THEN array_append(friends, $1) WHEN NOT friends @> ARRAY[$1]::varchar[] THEN array_append(friends, $1) ELSE friends END WHERE screenname = $2";
     let values = [`${user.id};${user.screenName}`, buddyName];

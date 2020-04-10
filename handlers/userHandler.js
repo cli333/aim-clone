@@ -12,6 +12,12 @@ const removeOnlineUser = (user) => {
   redisClient.srem("onlineUsers", `${user.id};${user.screenName}`);
 };
 
+/* 
+  chain #1
+  fork 2-1
+  compare password against db
+*/
+
 const isUserOnline = (user, socket, io) => {
   return redisClient.sismember(
     "onlineUsers",
@@ -19,6 +25,11 @@ const isUserOnline = (user, socket, io) => {
     compareHash(user, socket, io)
   );
 };
+
+/* 
+  chain #1
+  check pg for user
+*/
 
 const handleSignOn = (user, socket, io) => {
   const { screenName } = user;
@@ -31,6 +42,12 @@ const handleSignOn = (user, socket, io) => {
   );
 };
 
+/* 
+  chain #1
+  fork 1-3
+  get token
+*/
+
 const handleFirstSignOn = (user, socket, io) => (err) => {
   if (err) {
     console.log(err);
@@ -41,6 +58,14 @@ const handleFirstSignOn = (user, socket, io) => (err) => {
     return pgClient.query(query, values, getToken(user, socket, io));
   }
 };
+
+/* 
+  chain #1
+  fork 1-0
+  no user, generate hash
+  fork 2-0
+  if user, check if user is already online
+*/
 
 const handlePgClientResponse = (user, socket, io) => (err, result) => {
   if (err) {
@@ -54,6 +79,13 @@ const handlePgClientResponse = (user, socket, io) => (err, result) => {
   }
 };
 
+/*
+  chain #1
+  fork 2-2
+  user not online, compare password and go to fork 1-4
+  user online, emit user online
+*/
+
 const compareHash = (user, socket, io) => (err, result) => {
   if (err) {
     console.log(err);
@@ -65,10 +97,22 @@ const compareHash = (user, socket, io) => (err, result) => {
   }
 };
 
+/* 
+  chain #1
+  fork 1-1
+  insert user into pg
+*/
+
 const genHash = (user, socket, io) => {
   const { password } = user;
   return bcrypt.hash(password, 10, insertUserIntoDb(user, socket, io));
 };
+
+/* 
+  chain #1
+  fork 1-2
+  query pg for user info
+*/
 
 const insertUserIntoDb = (user, socket, io) => (err, hash) => {
   if (err) {
@@ -81,6 +125,12 @@ const insertUserIntoDb = (user, socket, io) => (err, hash) => {
   }
 };
 
+/* 
+  chain #1
+  fork 1-4
+  send token to user
+*/
+
 const getToken = (user, socket, io) => (err, result) => {
   if (err) {
     console.log(err);
@@ -91,6 +141,15 @@ const getToken = (user, socket, io) => (err, result) => {
     socket.emit("Incorrect password");
   }
 };
+
+/* 
+  chain #1
+  fork 1-5
+  send token etc
+  update redis online users
+  user joins own room
+  send updates to online users
+*/
 
 const emitToken = (user, socket, io) => (err, token) => {
   if (err) {
@@ -104,6 +163,11 @@ const emitToken = (user, socket, io) => (err, token) => {
     handleUpdateBuddies(io, socket);
   }
 };
+
+/* 
+  update redis online users
+  send updates to online users
+*/
 
 const handleSignOut = (user, socket, io) => {
   removeOnlineUser(user);

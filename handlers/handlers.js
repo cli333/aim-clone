@@ -23,6 +23,11 @@ module.exports = function (socket, io) {
     messageHandler.handleMessage(messageObj, socket, io);
   };
 
+  /*
+    when receiver receives message object containing room to join
+    receiver sends request to join with name of room to join
+  */
+
   const handleJoin = (room) => {
     socket.join(room);
   };
