@@ -5,7 +5,7 @@ import useChatWindow from "../../hooks/useChatWindow";
 import { socketCtx } from "../../context/SocketProvider";
 import { authCtx } from "../../context/AuthProvider";
 
-export default ({ position: { x, y }, room, receiver, message }) => {
+export default ({ position: { x, y }, room, receiver }) => {
   const [messageInput, setMessageInput] = useState("");
   const { handleSubmit } = useChatWindow({
     messageInput,
@@ -18,32 +18,27 @@ export default ({ position: { x, y }, room, receiver, message }) => {
   const [messages, setMessages] = useState([]);
 
   /*
-      WINDOW PROPS
-      {
-        sender: `${authUser.id};${authUser.screenName}`,
-        receiver: id:screenName,
-        room: `${authUser.id};${authUser.screenName}-${buddy}`,
-        position: newPosition,
-      }
+    window props
+    {
+      sender: `${authUser.id};${authUser.screenName}`,
+      receiver: id:screenName,
+      room: `${authUser.id};${authUser.screenName}/${buddy}`,
+      position: newPosition,
+    }
 
-      MESSAGE OBJ 
-      {
-        sender,
-        receiver,
-        room,
-        message
-      }
+    message object
+    {
+      sender,
+      receiver,
+      room,
+      message
+    }
   */
 
-  // useEffect(() => {
-  //   if (authUser) {
-  //     socket.on("Sent message", (messageObj) => {
-  //       // if notMe === receiver
-  //       // append to list
-  //       setMessages((messages) => [...messages, messageObj]);
-  //     });
-  //   }
-  // }, [authUser, socket]);
+  /* 
+    if message object's room is the same as the window's room
+    append message
+  */
 
   useEffect(() => {
     if (authUser) {
@@ -70,12 +65,12 @@ export default ({ position: { x, y }, room, receiver, message }) => {
       <ul className="chatwindow">
         {messages.map((message, idx) =>
           message.sender === `${authUser.id};${authUser.screenName}` ? (
-            <li key={idx}>
+            <li key={`${idx}${message.message}`}>
               <span className="me">{message.sender.split(";")[1]}</span>:{" "}
               <span>{message.message}</span>
             </li>
           ) : (
-            <li>
+            <li key={`${idx}${message.message}`}>
               <span className="not-me">{message.receiver.split(";")[1]}</span>:{" "}
               <span>{message.message}</span>
             </li>

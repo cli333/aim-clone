@@ -11,11 +11,19 @@ export default ({ children }) => {
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
 
+  /* 
+    populate buddy list
+  */
+
   useEffect(() => {
     if (authUser) {
       socket.emit("get buddies", authUser);
     }
   }, [socket, authUser]);
+
+  /* 
+    separate buddies into online/offline
+  */
 
   useEffect(() => {
     if (authUser) {

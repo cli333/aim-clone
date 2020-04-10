@@ -6,17 +6,6 @@ export default ({ messageInput, receiver, setMessageInput, room }) => {
   const { authUser } = useContext(authCtx);
   const { socket } = useContext(socketCtx);
 
-  /* 
-    MESSAGE OBJ
-      {
-        sender,
-        receiver,
-        room,
-        message,
-        token
-      }
-  */
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const messageObj = {

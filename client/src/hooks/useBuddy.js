@@ -7,14 +7,6 @@ export default ({ input, setInput }) => {
   const { authUser } = useContext(authCtx);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (authUser) {
-      socket.on("No such user", () => {
-        setErrors({ ...errors, input: "No such user" });
-      });
-    }
-  }, [socket, errors, authUser]);
-
   const validate = (input) => {
     let errors = {};
     if (input.length === 0) {
@@ -22,6 +14,14 @@ export default ({ input, setInput }) => {
     }
     return errors;
   };
+
+  useEffect(() => {
+    if (authUser) {
+      socket.on("No such user", () => {
+        setErrors({ ...errors, input: "No such user" });
+      });
+    }
+  }, [socket, errors, authUser]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

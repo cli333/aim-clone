@@ -8,7 +8,13 @@ export default (onClick, onDoubleClick) => {
     clearPendingPromises,
   } = useCancellablePromises();
 
-  function handleClick(idx) {
+  /* 
+    wait for 300 ms
+    if no second click, handle single click
+    else handle double click
+  */
+
+  const handleClick = (idx) => {
     clearPendingPromises();
     const waitForClick = cancellablePromise(delay(300));
     appendPendingPromise(waitForClick);
@@ -22,12 +28,12 @@ export default (onClick, onDoubleClick) => {
         removePendingPromise(waitForClick);
         if (!err.isCancelled) throw err.error;
       });
-  }
+  };
 
-  function handleDoubleClick() {
+  const handleDoubleClick = () => {
     clearPendingPromises();
     onDoubleClick();
-  }
+  };
 
   return { handleClick, handleDoubleClick };
 };

@@ -9,6 +9,11 @@ export default ({ buddies, category, totalBuddies }) => {
   const [activeBuddy, setActiveBuddy] = useState(null);
   const { handleClick, handleDoubleClick } = useClick(onClick, onDoubleClick);
   const { handleNewWindow } = useContext(chatWindowsCtx);
+  const { chatWindows } = useContext(chatWindowsCtx);
+
+  /*
+  set the active buddy
+  */
 
   function onClick(idx) {
     if (idx !== activeIdx) {
@@ -18,8 +23,19 @@ export default ({ buddies, category, totalBuddies }) => {
     }
   }
 
+  /*
+  open a new window
+  if window with the buddy as the receiver or sender doesn't exist
+  */
+
   function onDoubleClick() {
-    if (category === "Online") {
+    if (
+      category === "Online" &&
+      !chatWindows.some(
+        (window) =>
+          window.receiver === activeBuddy || window.sender === activeBuddy
+      )
+    ) {
       handleNewWindow(activeBuddy);
     }
   }

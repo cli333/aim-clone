@@ -39,7 +39,7 @@ const emitMessage = (messageObj, socket, io) => (err, authData) => {
     setTimeout(() => {
       // HANDLE THIS LATER
       io.in(room).emit("Sent message", newMessageObj);
-    }, 100);
+    }, 400);
   } else {
     console.log("bad token");
   }

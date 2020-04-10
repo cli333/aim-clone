@@ -5,14 +5,9 @@ export default ({ screenName, setScreenName, password, setPassword }) => {
   const [errors, setErrors] = useState({});
   const { socket } = useContext(socketCtx);
 
-  useEffect(() => {
-    socket.on("Incorrect password", () => {
-      setErrors({ ...errors, password: "Incorrect password" });
-    });
-    socket.on("User already logged in", () => {
-      setErrors({ ...errors, screenName: "User already logged in" });
-    });
-  }, [socket, errors]);
+  /*
+    validate inputs
+  */
 
   const validate = (screenName, password) => {
     let errors = {};
@@ -36,6 +31,20 @@ export default ({ screenName, setScreenName, password, setPassword }) => {
     setScreenName("");
     setPassword("");
   };
+
+  /*
+    validate password
+    check if user already signed on
+  */
+
+  useEffect(() => {
+    socket.on("Incorrect password", () => {
+      setErrors({ ...errors, password: "Incorrect password" });
+    });
+    socket.on("User already logged in", () => {
+      setErrors({ ...errors, screenName: "User already logged in" });
+    });
+  }, [socket, errors]);
 
   return {
     errors,
