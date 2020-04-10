@@ -5,7 +5,7 @@ import useChatWindow from "../../hooks/useChatWindow";
 import { socketCtx } from "../../context/SocketProvider";
 import { authCtx } from "../../context/AuthProvider";
 
-export default ({ position: { x, y }, room, receiver }) => {
+export default ({ position: { x, y }, room, receiver, sender }) => {
   const [messageInput, setMessageInput] = useState("");
   const { handleSubmit } = useChatWindow({
     messageInput,
@@ -50,9 +50,28 @@ export default ({ position: { x, y }, room, receiver }) => {
     }
   }, [authUser, socket, room]);
 
+  /*
+  sender,receiver,message
+  if sender === receiver && sender === user => "ME"
+  if sender !== user => red => "NOT ME"
+
+  {
+    message.sender === message.receiver || message.sender === USER ?
+    ME : 
+    NOT ME
+
+  }
+
+  */
+  console.log(authUser.id + authUser.screenName, receiver);
+
   return (
     <Window
-      header={`${receiver.split(";")[1]} - Instant Message`}
+      header={`${
+        receiver === authUser.id + ";" + authUser.screenName
+          ? sender.split(";")[1]
+          : receiver.split(";")[1]
+      } - Instant Message`}
       handle="chat-window"
       style={{
         position: "absolute",
@@ -64,6 +83,7 @@ export default ({ position: { x, y }, room, receiver }) => {
     >
       <ul className="chatwindow">
         {messages.map((message, idx) =>
+          message.sender === message.receiver ||
           message.sender === `${authUser.id};${authUser.screenName}` ? (
             <li key={`${idx}${message.message}`}>
               <span className="me">{message.sender.split(";")[1]}</span>:{" "}
