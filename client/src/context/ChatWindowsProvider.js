@@ -13,12 +13,13 @@ export default ({ children }) => {
   const { onlineBuddies } = useContext(buddyCtx);
 
   /* 
-    inside open chat
+    internal open chat request
     if window not open
     open window
   */
 
   const handleNewWindow = (buddy) => {
+    const randomNumber = Math.ceil(Math.random() * 7);
     const isWindowOpen = chatWindows.some(
       (window) => window.receiver === buddy
     );
@@ -29,6 +30,7 @@ export default ({ children }) => {
         receiver: buddy,
         room: `${authUser.id};${authUser.screenName}/${buddy}`,
         position: newPosition,
+        randomNumber,
       };
       setChatWindows([...chatWindows, newWindow]);
       setLastPosition(newPosition);
@@ -47,14 +49,15 @@ export default ({ children }) => {
   }, [authUser]);
 
   /*
-    outside open chat request
+    external open chat request
     if window with sender not open
-    open a window
+    open window
   */
 
   useEffect(() => {
     if (authUser) {
       socket.on("Open chat window", (messageObj) => {
+        const randomNumber = Math.ceil(Math.random() * 7);
         const newPosition = {
           x: lastPosition.x + 25,
           y: lastPosition.y + 25,
@@ -64,6 +67,7 @@ export default ({ children }) => {
           receiver: messageObj.receiver,
           room: messageObj.room,
           position: newPosition,
+          randomNumber,
         };
         setChatWindows((prevWindows) => {
           if (prevWindows.some((window) => window.room === messageObj.room)) {
@@ -79,8 +83,8 @@ export default ({ children }) => {
   }, [authUser, socket, lastPosition]);
 
   /* 
-    if sender logs off
-    close sender chat windows on receiver's end
+    if sender/receiver logs off
+    close sender/receiver chat windows
   */
 
   useEffect(() => {

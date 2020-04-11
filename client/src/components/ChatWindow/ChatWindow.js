@@ -5,7 +5,13 @@ import useChatWindow from "../../hooks/useChatWindow";
 import { socketCtx } from "../../context/SocketProvider";
 import { authCtx } from "../../context/AuthProvider";
 
-export default ({ position: { x, y }, room, receiver, sender }) => {
+export default ({
+  position: { x, y },
+  room,
+  receiver,
+  sender,
+  randomNumber,
+}) => {
   const [messageInput, setMessageInput] = useState("");
   const { handleSubmit } = useChatWindow({
     messageInput,
@@ -50,21 +56,6 @@ export default ({ position: { x, y }, room, receiver, sender }) => {
     }
   }, [authUser, socket, room]);
 
-  /*
-  sender,receiver,message
-  if sender === receiver && sender === user => "ME"
-  if sender !== user => red => "NOT ME"
-
-  {
-    message.sender === message.receiver || message.sender === USER ?
-    ME : 
-    NOT ME
-
-  }
-
-  */
-  console.log(authUser.id + authUser.screenName, receiver);
-
   return (
     <Window
       header={`${
@@ -83,15 +74,14 @@ export default ({ position: { x, y }, room, receiver, sender }) => {
     >
       <ul className="chatwindow">
         {messages.map((message, idx) =>
-          message.sender === message.receiver ||
           message.sender === `${authUser.id};${authUser.screenName}` ? (
             <li key={`${idx}${message.message}`}>
-              <span className="me">{message.sender.split(";")[1]}</span>:{" "}
+              <span className="me">{authUser.screenName}</span>:{" "}
               <span>{message.message}</span>
             </li>
           ) : (
             <li key={`${idx}${message.message}`}>
-              <span className="not-me">{message.receiver.split(";")[1]}</span>:{" "}
+              <span className="not-me">{message.sender.split(";")[1]}</span>:{" "}
               <span>{message.message}</span>
             </li>
           )
@@ -105,8 +95,12 @@ export default ({ position: { x, y }, room, receiver, sender }) => {
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
         ></textarea>
-        <img src="/banner1.gif" alt="90sbanner" className="banner" />
-        <button className="send-button" onClick={(e) => {}}>
+        <img
+          src={`/banner${randomNumber}.gif`}
+          alt="90s banner"
+          className="banner"
+        />
+        <button className="send-button">
           <img src="/send.png" alt="send" />
           <div>
             <span>S</span>end
