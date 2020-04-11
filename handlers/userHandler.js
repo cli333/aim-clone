@@ -1,5 +1,5 @@
-const pgClient = require("../pgClient/client");
-const redisClient = require("../redisClient/client");
+const { pgClient } = require("../redisPg/clients");
+const { redisClient } = require("../redisPg/clients");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { handleUpdateBuddies } = require("./buddyHandler");

@@ -1,5 +1,5 @@
-const pgClient = require("../pgclient/client");
-const redisClient = require("../redisClient/client");
+const { pgClient } = require("../redisPg/clients");
+const { redisClient } = require("../redisPg/clients");
 const jwt = require("jsonwebtoken");
 
 /* 
