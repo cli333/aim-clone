@@ -5,11 +5,12 @@ export const selectedWindowCtx = createContext();
 export default ({ children }) => {
   const [anotherSelected, setAnotherSelected] = useState(false);
 
+  const selectWindow = () => {};
+
   return (
     <selectedWindowCtx
       value={{
-        anotherSelected,
-        setAnotherSelected
+        selectWindow,
       }}
     >
       {children}

@@ -1,12 +1,12 @@
 # React Online Instant Messenger
 
-![DEMO](/client/public/screenshot4.jpg)
 ![DEMO](/client/public/screenshot1.jpg)
 
 A chat app inspired by AOL instant messenger.
 
-<li></li>
-<li></li>
+<li>PostgresSQL for storing user login info, buddies, etc.</li>
+<li>Redis for caching current online users.</li>
+<li>Web sockets for all client-server interactions.</li>
 
 ## Summary
 
