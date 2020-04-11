@@ -1,7 +1,7 @@
 # React Online Instant Messenger
 
-![DEMO](/client/public/screenshot1.png)
-![DEMO](/client/public/screenshot2.png)
+![DEMO](/client/public/screenshot1.jpg)
+![DEMO](/client/public/screenshot2.jpg)
 
 A chat app inspired by AOL instant messenger.
 
