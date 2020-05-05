@@ -4,7 +4,7 @@ const cors = require("cors");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const colors = require("colors");
-const { redisClient } = require("./redisPg/client");
+const { redisClient } = require("./redisPg/clients");
 const path = require("path");
 const port = process.env.PORT || 5000;
 
