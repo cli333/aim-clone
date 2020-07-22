@@ -13,8 +13,6 @@ const removeOnlineUser = (user) => {
 };
 
 /* 
-  chain #1
-  fork 2-1
   compare password against db
 */
 
@@ -27,7 +25,6 @@ const isUserOnline = (user, socket, io) => {
 };
 
 /* 
-  chain #1
   check pg for user
 */
 
@@ -43,8 +40,6 @@ const handleSignOn = (user, socket, io) => {
 };
 
 /* 
-  chain #1
-  fork 1-3
   get token
 */
 
@@ -60,10 +55,7 @@ const handleFirstSignOn = (user, socket, io) => (err) => {
 };
 
 /* 
-  chain #1
-  fork 1-0
   no user, generate hash
-  fork 2-0
   if user, check if user is already online
 */
 
@@ -80,8 +72,6 @@ const handlePgClientResponse = (user, socket, io) => (err, result) => {
 };
 
 /*
-  chain #1
-  fork 2-2
   user not online, compare password and go to fork 1-4
   user online, emit user online
 */
@@ -98,8 +88,6 @@ const compareHash = (user, socket, io) => (err, result) => {
 };
 
 /* 
-  chain #1
-  fork 1-1
   insert user into pg
 */
 
@@ -109,8 +97,6 @@ const genHash = (user, socket, io) => {
 };
 
 /* 
-  chain #1
-  fork 1-2
   query pg for user info
 */
 
@@ -126,8 +112,6 @@ const insertUserIntoDb = (user, socket, io) => (err, hash) => {
 };
 
 /* 
-  chain #1
-  fork 1-4
   send token to user
 */
 
@@ -143,8 +127,6 @@ const getToken = (user, socket, io) => (err, result) => {
 };
 
 /* 
-  chain #1
-  fork 1-5
   send token etc
   update redis online users
   user joins own room
