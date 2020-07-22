@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 /*
-  step 0
   verify token
 */
 
@@ -11,7 +10,6 @@ const handleMessage = (messageObj, socket, io) => {
 };
 
 /*
-  step 1
   sender joins room indicated in the message object "${sender}/${receiver}"
   send message object to receiver
   wait for receiver to join room "${sender}/${receiver}"
