@@ -111,7 +111,6 @@ const emitBuddies = (socket, io, user, buddies) => {
 
 /* 
   for each online user, send buddy updates
-  go to chain #1 step 1
 */
 
 const updateBuddies = (io, socket) => (err, onlineUsers) => {
@@ -174,7 +173,6 @@ const buddyExists = (user, buddyName, socket, io) => (err, result) => {
 
 /* 
   add user to the buddy's friends list
-  then chain #1 step 1
   pass in io, so buddy list updates will be passed to the room that the buddy occupies
 */
 
